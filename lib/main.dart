@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'features/closet/closet_screen.dart';
+import 'package:wheelwear_frontend/home_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       theme: CupertinoThemeData(
         primaryColor: CupertinoColors.activeBlue,
       ),
-      home: ClosetScreen(),
+      home: HomeScreen(),
     );
   }
 }
