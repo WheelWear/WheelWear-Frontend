@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:wheelwear_frontend/features/Auth/register_screen.dart';
 
 import 'login_form_screen.dart';
 
@@ -13,7 +14,7 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 120),
+              SizedBox(height: 130),
 
               // ✅ 인사말 텍스트
               Column(
@@ -53,10 +54,10 @@ class LoginScreen extends StatelessWidget {
 
               // ✅ 버튼 그룹
               Container(
-                width: double.infinity, // 전체 너비 사용
-                padding: EdgeInsets.symmetric(horizontal: 8), // 버튼 간격 조절 가능
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch, // 버튼 너비 자동 확장
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // ✅ 로그인 버튼
                     CupertinoButton(
@@ -67,7 +68,7 @@ class LoginScreen extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          CupertinoPageRoute(builder: (context) => LoginFormScreen()), // 이동할 화면 추가
+                          CupertinoPageRoute(builder: (context) => LoginFormScreen()),
                         );
                       },
                     ),
@@ -87,7 +88,12 @@ class LoginScreen extends StatelessWidget {
                           child: Text("회원가입", style: TextStyle(fontSize: 14, color: CupertinoColors.black)),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(builder: (context) => SignUpScreen()),
+                        );
+                      },
                     ),
 
                     SizedBox(height: 10),

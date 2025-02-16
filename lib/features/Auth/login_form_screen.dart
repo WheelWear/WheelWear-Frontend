@@ -9,7 +9,6 @@ class LoginFormScreen extends StatefulWidget {
 
 class _LoginFormScreenState extends State<LoginFormScreen> {
   void _handleLogin() {
-    // ✅ 로그인 버튼 클릭 시 홈 화면으로 이동
     Navigator.pushReplacement(
       context,
       CupertinoPageRoute(builder: (context) => HomeScreen()),
@@ -19,13 +18,21 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: Text("로그인"),
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: Icon(CupertinoIcons.back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       child: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 40),
+              SizedBox(height: 20),
 
               // ✅ 로그인 타이틀
               Text(
