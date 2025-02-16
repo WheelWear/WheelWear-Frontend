@@ -32,25 +32,25 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 20),
+              SizedBox(height: 5),
 
-              // ✅ 로그인 타이틀
-              Text(
-                "로그인",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: CupertinoColors.black,
-                ),
-              ),
+              // // ✅ 로그인 타이틀
+              // Text(
+              //   "로그인",
+              //   style: TextStyle(
+              //     fontSize: 24,
+              //     fontWeight: FontWeight.bold,
+              //     color: CupertinoColors.black,
+              //   ),
+              // ),
 
-              SizedBox(height: 20),
+              // SizedBox(height: 20),
 
               // ✅ 서비스 로고
               Image.asset(
-                "assets/auth/splashLogo.png", // 경로 확인 필요
-                width: 120,
-                height: 120,
+                "assets/auth/MainLogo.png", // 경로 확인 필요
+                width: 300,
+                height: 300,
                 fit: BoxFit.contain,
               ),
 
