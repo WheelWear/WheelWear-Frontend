@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:wheelwear_frontend/home_screen.dart';
 
@@ -8,11 +9,8 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: CupertinoThemeData(
-        primaryColor: CupertinoColors.activeBlue,
-      ),
       home: HomeScreen(),
     );
   }
