@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
+import 'login_screen.dart';
+
+
 class SignUpScreen extends StatefulWidget {
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -8,11 +11,25 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   bool _agreeToTerms = false;
 
+  void _handleLogin() {
+    Navigator.pushReplacement(
+      context,
+      CupertinoPageRoute(builder: (context) => LoginScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text("회원가입"),
+        middle: DefaultTextStyle(
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w400,
+            color: CupertinoColors.black,
+          ),
+          child: Text("회원가입"),
+        ),
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
           child: Icon(CupertinoIcons.back),
@@ -24,12 +41,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
           padding: EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
-              SizedBox(height: 60),
-
-              Text(
-                "WheelWear 회원가입",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
+              SizedBox(height: 40),
+              // SizedBox(height: 60),
+              //
+              // Text(
+              //   "WheelWear 회원가입",
+              //   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              // ),
 
               SizedBox(height: 40),
 
@@ -42,13 +60,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildInputField("Name", "name"),
+                    _buildInputField("닉네임", "name"),
                     SizedBox(height: 10),
                     _buildInputField("ID", "example@gmail.com"),
                     SizedBox(height: 10),
-                    _buildInputField("Create a password", "must be 8 characters", obscureText: true),
+                    _buildInputField("비밀번호", "must be 8 characters", obscureText: true),
                     SizedBox(height: 10),
-                    _buildInputField("Confirm password", "repeat password", obscureText: true),
+                    _buildInputField("비밀번호 확인", "repeat password", obscureText: true),
                   ],
                 ),
               ),
@@ -84,10 +102,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 borderRadius: BorderRadius.circular(10),
                 padding: EdgeInsets.symmetric(vertical: 14),
                 child: Center(
-                  child: Text("sign up", style: TextStyle(fontSize: 16, color: CupertinoColors.white)),
+                  child: Text("회원가입", style: TextStyle(fontSize: 16, color: CupertinoColors.white)),
                 ),
                 onPressed: _agreeToTerms ? () {
-                  // TODO: 회원가입 로직 추가
+                  _handleLogin();
                 } : null,
               ),
 
