@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'profile_edit_screen.dart';
 
 class MyPageScreen extends StatelessWidget {
   @override
@@ -15,11 +16,8 @@ class MyPageScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 20),
-
-              _buildProfileSection(),
-
+              _buildProfileSection(context), // context 전달
               SizedBox(height: 40),
-
               _buildPhotoSection(),
             ],
           ),
@@ -29,7 +27,7 @@ class MyPageScreen extends StatelessWidget {
   }
 
   // 🔹 프로필 영역
-  Widget _buildProfileSection() {
+  Widget _buildProfileSection(BuildContext context) {
     return Container(
       width: 361,
       height: 131,
@@ -94,23 +92,33 @@ class MyPageScreen extends StatelessWidget {
           Positioned(
             left: 0,
             top: 98,
-            child: Container(
-              width: 361,
-              height: 33,
-              decoration: ShapeDecoration(
-                color: Color(0xFF3617CE),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) => ProfileEditScreen(),
+                  ),
+                );
+              },
+              child: Container(
+                width: 361,
+                height: 33,
+                decoration: ShapeDecoration(
+                  color: Color(0xFF3617CE),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
                 ),
-              ),
-              child: Center(
-                child: Text(
-                  '프로필 편집하기',
-                  style: TextStyle(
-                    color: CupertinoColors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    height: 1.71,
+                child: Center(
+                  child: Text(
+                    '프로필 편집하기',
+                    style: TextStyle(
+                      color: CupertinoColors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      height: 1.71,
+                    ),
                   ),
                 ),
               ),
@@ -156,5 +164,3 @@ class MyPageScreen extends StatelessWidget {
     );
   }
 }
-
-

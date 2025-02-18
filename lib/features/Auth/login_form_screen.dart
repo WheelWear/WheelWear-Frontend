@@ -19,7 +19,14 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text("로그인"),
+        middle: DefaultTextStyle(
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w400,
+            color: CupertinoColors.black,
+          ),
+          child: Text("로그인"),
+        ),
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
           child: Icon(CupertinoIcons.back),
@@ -30,9 +37,9 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SizedBox(height: 5),
+              SizedBox(height: 30),
 
               // // ✅ 로그인 타이틀
               // Text(
@@ -93,7 +100,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                 ],
               ),
 
-              SizedBox(height: 30),
+              SizedBox(height: 70),
 
               // ✅ 로그인 버튼
               CupertinoButton(
