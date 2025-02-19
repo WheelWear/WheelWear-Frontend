@@ -1,39 +1,32 @@
 import 'package:flutter/cupertino.dart';
+import 'models/closet_item.dart';
+import 'services/api_service.dart';
+import 'widgets/items/empty_closet_view.dart';
+import 'widgets/items/closet_list_view.dart';
 
 class ClosetItemScreen extends StatelessWidget {
+  final ApiService _apiService = ApiService();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
-        children: [
-          SizedBox(height: 10),
-          // Spacer를 사용하려면 부모로부터 유한한 높이 제약을 받아야 합니다.
-          // 이미 ClosetHeaderScreen에서 Expanded로 감쌌으므로 여기서 Spacer 사용 가능
-          Spacer(),
-          EmptyClosetView(),
-          Spacer(),
-        ],
+      child: FutureBuilder<List<ClosetItem>>(
+        future: _apiService.fetchClosetItems(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CupertinoActivityIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            final items = snapshot.data!;
+            return items.isEmpty
+                ? EmptyClosetView()
+                : ClosetListView(items: items);
+          } else {
+            return Center(child: Text('No data found.'));
+          }
+        },
       ),
-    );
-  }
-
-  Widget EmptyClosetView() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset(
-          "assets/closet/emptyCloset.png",
-          width: 250,
-          height: 250,
-          fit: BoxFit.contain,
-        ),
-        SizedBox(height: 20),
-        Text(
-          "옷장이 아직 비어있어요! \n옷을 추가해주세요!",
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16, color: CupertinoColors.systemGrey),
-        ),
-      ],
     );
   }
 }

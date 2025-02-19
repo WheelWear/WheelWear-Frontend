@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'closet_item_screen.dart';
-import 'widgets/segmented_control_content.dart';
-import 'widgets/category_tabs.dart';
+import 'widgets/headers/segmented_control_content.dart';
+import 'widgets/headers/category_tabs.dart';
+
 
 class ClosetHeaderScreen extends StatelessWidget {
   const ClosetHeaderScreen({Key? key}) : super(key: key);
@@ -27,13 +29,25 @@ class ClosetHeaderScreen extends StatelessWidget {
             children: [
               SizedBox(height: 10),
               SegmentedControlContent(),
-              SizedBox(height: 20),
-              CategoryTabs(),
-              SizedBox(height: 20),
-              Container(
-                height: 22,
-                margin: EdgeInsets.only(right: 20), // 오른쪽에 16 픽셀 여백
-                child: _buildSelectButton(),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // 왼쪽: CategoryTabs
+                  CategoryTabs(),
+                  // 오른쪽: 버튼
+                  Container(
+                    height: 22,
+                    margin: const EdgeInsets.only(right: 20),
+                    child: _buildSelectButton(),
+                  ),
+                ],
+              ),
+              Divider(
+                color: Colors.grey.shade300,
+                thickness: 1, // 두께
+                // indent: 16,  // 왼쪽 여백
+                // endIndent: 16,  // 오른쪽 여백
               ),
               SizedBox(height: 10),
               // ClosetItemScreen은 Expanded로 감싸서 부모의 남은 공간을 채우도록 함
@@ -54,7 +68,7 @@ class ClosetHeaderScreen extends StatelessWidget {
         child: Text("선택",
             style: TextStyle(
                 fontSize: 12,
-                color: CupertinoColors.darkBackgroundGray,
+                color: CupertinoColors.white,
                 fontWeight: FontWeight.bold,
             ),
         ),
