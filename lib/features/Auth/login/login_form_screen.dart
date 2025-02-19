@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:wheelwear_frontend/home_screen.dart';
+import '../../../home_screen.dart';
+import 'login_form_service.dart';
 
 class LoginFormScreen extends StatefulWidget {
   @override
@@ -8,25 +9,52 @@ class LoginFormScreen extends StatefulWidget {
 }
 
 class _LoginFormScreenState extends State<LoginFormScreen> {
-  void _handleLogin() {
-    Navigator.pushReplacement(
-      context,
-      CupertinoPageRoute(builder: (context) => HomeScreen()),
+  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  void _showDialog(String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text("알림"),
+          content: Text(message),
+          actions: [
+            CupertinoDialogAction(
+              child: Text("확인"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
     );
+  }
+
+  Future<void> _handleLogin() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final loginService = LoginService();
+    bool success = await loginService.login(_idController.text, _passwordController.text);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (!success) {
+      _showDialog("로그인 실패!🥲");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: DefaultTextStyle(
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w400,
-            color: CupertinoColors.black,
-          ),
-          child: Text("로그인"),
-        ),
+        middle: Text("로그인", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400)),
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
           child: Icon(CupertinoIcons.back),
@@ -41,21 +69,8 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
             children: [
               SizedBox(height: 30),
 
-              // // ✅ 로그인 타이틀
-              // Text(
-              //   "로그인",
-              //   style: TextStyle(
-              //     fontSize: 24,
-              //     fontWeight: FontWeight.bold,
-              //     color: CupertinoColors.black,
-              //   ),
-              // ),
-
-              // SizedBox(height: 20),
-
-              // ✅ 서비스 로고
               Image.asset(
-                "assets/auth/MainLogo.png", // 경로 확인 필요
+                "assets/auth/MainLogo.png",
                 width: 300,
                 height: 300,
                 fit: BoxFit.contain,
@@ -63,13 +78,13 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
 
               SizedBox(height: 40),
 
-              // ✅ ID 입력 필드
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("ID", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
                   SizedBox(height: 6),
                   CupertinoTextField(
+                    controller: _idController,
                     placeholder: "Your email",
                     padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -82,13 +97,13 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
 
               SizedBox(height: 20),
 
-              // ✅ Password 입력 필드
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Password", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
                   SizedBox(height: 6),
                   CupertinoTextField(
+                    controller: _passwordController,
                     placeholder: "Your password",
                     obscureText: true,
                     padding: EdgeInsets.all(16),
@@ -102,15 +117,17 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
 
               SizedBox(height: 70),
 
-              // ✅ 로그인 버튼
-              CupertinoButton(
-                color: CupertinoColors.black,
-                borderRadius: BorderRadius.circular(10),
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: Center(
-                  child: Text("Log in", style: TextStyle(fontSize: 16, color: CupertinoColors.white)),
+              Container(
+                width: double.infinity,
+                child: CupertinoButton(
+                  color: CupertinoColors.black,
+                  borderRadius: BorderRadius.circular(10),
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: _isLoading
+                      ? CupertinoActivityIndicator()
+                      : Text("Log in", style: TextStyle(fontSize: 16, color: CupertinoColors.white)),
+                  onPressed: _isLoading ? null : _handleLogin,
                 ),
-                onPressed: _handleLogin,
               ),
             ],
           ),

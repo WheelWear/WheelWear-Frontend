@@ -35,3 +35,4 @@ class SignupViewModel extends ChangeNotifier {
     }
   }
 }
+

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'features/Auth/login/login_screen.dart';
+import 'features/Auth/login_screen.dart';
 
 void main() {
   runApp(MyApp());

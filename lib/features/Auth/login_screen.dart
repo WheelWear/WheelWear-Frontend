@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wheelwear_frontend/features/Auth/signup/signup_screen.dart';
 
-import 'login_form_screen.dart';
+import 'login/login_form_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
