@@ -45,7 +45,12 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
       _isLoading = false;
     });
 
-    if (!success) {
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        CupertinoPageRoute(builder: (context) => HomeScreen()),
+      );
+    } else {
       _showDialog("로그인 실패!🥲");
     }
   }
