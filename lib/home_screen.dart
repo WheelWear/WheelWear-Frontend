@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'features/Fitting/fitting_screen.dart';
 import 'features/MyPage/mypage_screen.dart';
-import 'features/Closet/closet_screen.dart';
+import 'features/Closet/closet_header_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
               children: [
-                ClosetScreen(),
+                ClosetHeaderScreen(),
                 FittingScreen(),
                 MyPageScreen(),
               ],
