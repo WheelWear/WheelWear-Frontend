@@ -1,13 +1,147 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../utils/image_picker_util.dart';
 import 'profile_edit_screen.dart';
 
-class MyPageScreen extends StatelessWidget {
+class MyPageScreen extends StatefulWidget {
+  @override
+  _MyPageScreenState createState() => _MyPageScreenState();
+}
+class AlarmScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        leading: Align(
+          alignment: Alignment.center,
+          child: Text(
+            "알림",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+        ),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          minSize: 0,
+          child: Icon(
+            CupertinoIcons.clear,
+            size: 30,
+            color: CupertinoColors.systemGrey,
+          ),
+          onPressed: (){
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      child: SafeArea(
+        child: Container(
+          color: CupertinoColors.systemGrey6,
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("오늘 받은 알림",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              SizedBox(height: 10),
+              _buildNotificationCard("👕", "띠링~ 기부하실 시간!", "기부함이 다 찼어요. 방문수거 서비스를 신청해주세요.", "8h"),
+              SizedBox(height: 20),
+              Text("이전 알림",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              SizedBox(height: 10),
+              _buildNotificationCard("🎉", "첫 기부 축하드립니다!", "방문수거 서비스는 어땠는지 평가해주세요.", "1yr"),
+              _buildNotificationCard("🚀", "입지 않는 옷을 기부해보는 건 어떠세요?", "내 옷장에서 기부함에 넣으면, 저희 WheelWear가 수거해 가요!", "1yr"),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+Widget _buildNotificationCard(String emoji, String title, String content, String time) {
+  return Container(
+    padding: EdgeInsets.all(12),
+    margin: EdgeInsets.only(bottom: 12),
+    decoration: BoxDecoration(
+      color: CupertinoColors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: CupertinoColors.black.withOpacity(0.05),
+          blurRadius: 10,
+          spreadRadius: 2,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(emoji, style: TextStyle(fontSize: 24)), // 이모지
+        SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text(
+                    time,
+                    style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey),
+                  ),
+                ],
+              ),
+              SizedBox(height: 4),
+              Text(content, style: TextStyle(fontSize: 14, color: CupertinoColors.black)),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _MyPageScreenState extends State<MyPageScreen> {
+  File? _selectedImage;
+
+  void _pickImage() async {
+    File? image = await ImagePickerUtil.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _selectedImage = image;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: Text("마이페이지"),
         automaticallyImplyLeading: false,
+        trailing: CupertinoButton(
+            padding: EdgeInsets.zero,// 버튼 기본 패딩 제거
+            minSize: 0, //사이즈 작아서 안보이는거 방지
+            child: Icon(
+              CupertinoIcons.bell,
+              size: 30,
+              color: CupertinoColors.systemGrey,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => AlarmScreen()),
+              );
+            },// 알림 아이콘
+          ),
       ),
       child: SafeArea(
         child: Padding(
@@ -16,7 +150,7 @@ class MyPageScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 20),
-              _buildProfileSection(context), // context 전달
+              _buildProfileSection(context),
               SizedBox(height: 40),
               _buildPhotoSection(),
             ],
@@ -26,14 +160,13 @@ class MyPageScreen extends StatelessWidget {
     );
   }
 
-  // 🔹 프로필 영역
+  // 🔹 프로필 영역 (변경 없음)
   Widget _buildProfileSection(BuildContext context) {
     return Container(
       width: 361,
       height: 131,
       child: Stack(
         children: [
-          // 🔹 프로필 이미지
           Positioned(
             left: 0,
             top: 0,
@@ -57,13 +190,11 @@ class MyPageScreen extends StatelessWidget {
               child: Icon(CupertinoIcons.person, size: 40, color: CupertinoColors.systemGrey),
             ),
           ),
-
-          // 🔹 닉네임
           Positioned(
             left: 98,
             top: 12,
             child: Text(
-              '닉네임',
+              '토마토',
               style: TextStyle(
                 color: CupertinoColors.black,
                 fontSize: 14,
@@ -72,13 +203,11 @@ class MyPageScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // 🔹 ID
           Positioned(
             left: 98,
             top: 36,
             child: Text(
-              '토마토',
+              'tomato123',
               style: TextStyle(
                 color: Color(0xFF97999B),
                 fontSize: 14,
@@ -87,8 +216,27 @@ class MyPageScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // 🔹 프로필 편집 버튼
+          Positioned(
+            left: 200,
+            top: 34,
+            child: CupertinoButton(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5), // 패딩 추가
+              minSize: 0,
+              borderRadius: BorderRadius.circular(8), // 둥근 모서리
+              color: CupertinoColors.systemGrey6, // 연한 회색 배경
+              child: Text(
+                "로그아웃",
+                style: TextStyle(
+                  color: CupertinoColors.black,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              onPressed: () {
+                print("로그아웃되었습니다");
+              },
+            ),
+          ),
           Positioned(
             left: 0,
             top: 98,
@@ -129,7 +277,7 @@ class MyPageScreen extends StatelessWidget {
     );
   }
 
-  // 🔹 사진 추가 섹션
+  // 🔹 사진 추가/변경 섹션
   Widget _buildPhotoSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,25 +290,59 @@ class MyPageScreen extends StatelessWidget {
         Center(
           child: Column(
             children: [
-              Text("내 사진 없음", style: TextStyle(fontSize: 14, color: CupertinoColors.systemGrey)),
-              SizedBox(height: 10),
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: CupertinoColors.systemGrey5,
-                    borderRadius: BorderRadius.circular(10),
+              if (_selectedImage == null) ...[
+                Text("내 사진 없음", style: TextStyle(fontSize: 14, color: CupertinoColors.systemGrey)),
+                SizedBox(height: 10),
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    child: Icon(CupertinoIcons.add, size: 120, color: CupertinoColors.systemGrey),
                   ),
-                  child: Icon(CupertinoIcons.add, size: 40, color: CupertinoColors.systemGrey),
+                  onPressed: _pickImage,
                 ),
-                onPressed: () {},
-              ),
+              ],
+
+              if (_selectedImage != null) ...[
+                ClipRRect(
+                  child: Image.file(_selectedImage!, width: 310, height: 410, fit: BoxFit.cover),
+                ),
+                SizedBox(height: 10),
+
+                Container(
+                  width: 310,
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: _pickImage,
+                    child: Container(
+                      width: 90,
+                      height: 28,
+                      decoration: ShapeDecoration(
+                        color: Color(0xFFC3C3C3),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.19),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "사진 변경",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: CupertinoColors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
       ],
     );
   }
+
 }
