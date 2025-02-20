@@ -25,4 +25,10 @@ class SelectionProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void clearSelection() {
+    selectedItems.clear();
+    isSelectionMode = false;
+    notifyListeners();
+  }
 }

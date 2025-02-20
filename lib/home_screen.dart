@@ -6,6 +6,7 @@ import 'features/Closet/closet_header_screen.dart';
 import 'package:provider/provider.dart';
 import 'features/Closet/providers/closet_filter_provider.dart';
 import 'features/Closet/providers/selection_provider.dart';
+import 'features/Closet/providers/closet_items_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -51,6 +52,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ChangeNotifierProvider<SelectionProvider>(
                       create: (_) => SelectionProvider(),
+                    ),
+                    ChangeNotifierProvider<ClosetItemsProvider>(
+                      create: (_) => ClosetItemsProvider(),
                     ),
                   ],
                   child: ClosetHeaderScreen(),

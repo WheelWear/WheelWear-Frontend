@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/closet_item.dart';
 import '../../providers/closet_filter_provider.dart';
+import '../../providers/selection_provider.dart';
 import 'add_cloth_button.dart';
 import 'closet_item_tile.dart';
+import 'select_mode_button.dart';
 
 class ClosetListView extends StatelessWidget {
   final List<ClosetItem> items;
@@ -20,6 +22,10 @@ class ClosetListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // SelectionProvider에서 선택모드 여부 가져오기
+    final selectionProvider = Provider.of<SelectionProvider>(context, listen: true);
+    final isSelectionMode = selectionProvider.isSelectionMode;
+
     final filteredItems = _filterItems(context, items);
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -53,6 +59,12 @@ class ClosetListView extends StatelessWidget {
               }
             },
           ),
+          if (isSelectionMode)
+            Positioned(
+              bottom: 16,
+              right: 16,
+              child: SelectModeButton(),
+            ),
         ],
       ),
     );
