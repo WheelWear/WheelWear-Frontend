@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wheelwear_frontend/features/Auth/signup/signup_screen.dart';
-
+import '../../home_screen.dart';
 import 'login/login_form_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -116,7 +116,10 @@ class LoginScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () { Navigator.push(
+                        context,
+                        CupertinoPageRoute(builder: (context) => HomeScreen()),
+                      );},
                     ),
                   ],
                 ),

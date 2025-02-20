@@ -1,7 +1,26 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../utils/image_picker_util.dart';
 import 'profile_edit_screen.dart';
 
-class MyPageScreen extends StatelessWidget {
+class MyPageScreen extends StatefulWidget {
+  @override
+  _MyPageScreenState createState() => _MyPageScreenState();
+}
+
+class _MyPageScreenState extends State<MyPageScreen> {
+  File? _selectedImage;
+
+  void _pickImage() async {
+    File? image = await ImagePickerUtil.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _selectedImage = image;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -16,7 +35,7 @@ class MyPageScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 20),
-              _buildProfileSection(context), // context 전달
+              _buildProfileSection(context),
               SizedBox(height: 40),
               _buildPhotoSection(),
             ],
@@ -26,14 +45,13 @@ class MyPageScreen extends StatelessWidget {
     );
   }
 
-  // 🔹 프로필 영역
+  // 🔹 프로필 영역 (변경 없음)
   Widget _buildProfileSection(BuildContext context) {
     return Container(
       width: 361,
       height: 131,
       child: Stack(
         children: [
-          // 🔹 프로필 이미지
           Positioned(
             left: 0,
             top: 0,
@@ -57,8 +75,6 @@ class MyPageScreen extends StatelessWidget {
               child: Icon(CupertinoIcons.person, size: 40, color: CupertinoColors.systemGrey),
             ),
           ),
-
-          // 🔹 닉네임
           Positioned(
             left: 98,
             top: 12,
@@ -72,8 +88,6 @@ class MyPageScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // 🔹 ID
           Positioned(
             left: 98,
             top: 36,
@@ -87,8 +101,6 @@ class MyPageScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // 🔹 프로필 편집 버튼
           Positioned(
             left: 0,
             top: 98,
@@ -129,7 +141,7 @@ class MyPageScreen extends StatelessWidget {
     );
   }
 
-  // 🔹 사진 추가 섹션
+  // 🔹 사진 추가/변경 섹션
   Widget _buildPhotoSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,25 +154,59 @@ class MyPageScreen extends StatelessWidget {
         Center(
           child: Column(
             children: [
-              Text("내 사진 없음", style: TextStyle(fontSize: 14, color: CupertinoColors.systemGrey)),
-              SizedBox(height: 10),
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: CupertinoColors.systemGrey5,
-                    borderRadius: BorderRadius.circular(10),
+              if (_selectedImage == null) ...[
+                Text("내 사진 없음", style: TextStyle(fontSize: 14, color: CupertinoColors.systemGrey)),
+                SizedBox(height: 10),
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    child: Icon(CupertinoIcons.add, size: 120, color: CupertinoColors.systemGrey),
                   ),
-                  child: Icon(CupertinoIcons.add, size: 40, color: CupertinoColors.systemGrey),
+                  onPressed: _pickImage,
                 ),
-                onPressed: () {},
-              ),
+              ],
+
+              if (_selectedImage != null) ...[
+                ClipRRect(
+                  child: Image.file(_selectedImage!, width: 310, height: 410, fit: BoxFit.cover),
+                ),
+                SizedBox(height: 10),
+
+                Container(
+                  width: 310,
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: _pickImage,
+                    child: Container(
+                      width: 90,
+                      height: 28,
+                      decoration: ShapeDecoration(
+                        color: Color(0xFFC3C3C3),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.19),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "사진 변경",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: CupertinoColors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
       ],
     );
   }
+
 }
