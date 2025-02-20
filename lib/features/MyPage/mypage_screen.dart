@@ -8,6 +8,105 @@ class MyPageScreen extends StatefulWidget {
   @override
   _MyPageScreenState createState() => _MyPageScreenState();
 }
+class AlarmScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        leading: Align(
+          alignment: Alignment.center,
+          child: Text(
+            "알림",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+        ),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          minSize: 0,
+          child: Icon(
+            CupertinoIcons.clear,
+            size: 30,
+            color: CupertinoColors.systemGrey,
+          ),
+          onPressed: (){
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      child: SafeArea(
+        child: Container(
+          color: CupertinoColors.systemGrey6,
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("오늘 받은 알림",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              SizedBox(height: 10),
+              _buildNotificationCard("👕", "띠링~ 기부하실 시간!", "기부함이 다 찼어요. 방문수거 서비스를 신청해주세요.", "8h"),
+              SizedBox(height: 20),
+              Text("이전 알림",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              SizedBox(height: 10),
+              _buildNotificationCard("🎉", "첫 기부 축하드립니다!", "방문수거 서비스는 어땠는지 평가해주세요.", "1yr"),
+              _buildNotificationCard("🚀", "입지 않는 옷을 기부해보는 건 어떠세요?", "내 옷장에서 기부함에 넣으면, 저희 WheelWear가 수거해 가요!", "1yr"),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+Widget _buildNotificationCard(String emoji, String title, String content, String time) {
+  return Container(
+    padding: EdgeInsets.all(12),
+    margin: EdgeInsets.only(bottom: 12),
+    decoration: BoxDecoration(
+      color: CupertinoColors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: CupertinoColors.black.withOpacity(0.05),
+          blurRadius: 10,
+          spreadRadius: 2,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(emoji, style: TextStyle(fontSize: 24)), // 이모지
+        SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text(
+                    time,
+                    style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey),
+                  ),
+                ],
+              ),
+              SizedBox(height: 4),
+              Text(content, style: TextStyle(fontSize: 14, color: CupertinoColors.black)),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
 class _MyPageScreenState extends State<MyPageScreen> {
   File? _selectedImage;
@@ -27,6 +126,22 @@ class _MyPageScreenState extends State<MyPageScreen> {
       navigationBar: CupertinoNavigationBar(
         middle: Text("마이페이지"),
         automaticallyImplyLeading: false,
+        trailing: CupertinoButton(
+            padding: EdgeInsets.zero,// 버튼 기본 패딩 제거
+            minSize: 0, //사이즈 작아서 안보이는거 방지
+            child: Icon(
+              CupertinoIcons.bell,
+              size: 30,
+              color: CupertinoColors.systemGrey,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => AlarmScreen()),
+              );
+            },// 알림 아이콘
+          ),
       ),
       child: SafeArea(
         child: Padding(
@@ -79,7 +194,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
             left: 98,
             top: 12,
             child: Text(
-              '닉네임',
+              '토마토',
               style: TextStyle(
                 color: CupertinoColors.black,
                 fontSize: 14,
@@ -92,13 +207,34 @@ class _MyPageScreenState extends State<MyPageScreen> {
             left: 98,
             top: 36,
             child: Text(
-              '토마토',
+              'tomato123',
               style: TextStyle(
                 color: Color(0xFF97999B),
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 height: 1.71,
               ),
+            ),
+          ),
+          Positioned(
+            left: 200,
+            top: 34,
+            child: CupertinoButton(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5), // 패딩 추가
+              minSize: 0,
+              borderRadius: BorderRadius.circular(8), // 둥근 모서리
+              color: CupertinoColors.systemGrey6, // 연한 회색 배경
+              child: Text(
+                "로그아웃",
+                style: TextStyle(
+                  color: CupertinoColors.black,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              onPressed: () {
+                print("로그아웃되었습니다");
+              },
             ),
           ),
           Positioned(
