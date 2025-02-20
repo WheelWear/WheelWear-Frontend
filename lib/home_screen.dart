@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'features/Fitting/fitting_screen.dart';
 import 'features/MyPage/mypage_screen.dart';
 import 'features/Closet/closet_header_screen.dart';
+import 'package:provider/provider.dart';
+import 'features/Closet/closet_filter_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -41,7 +43,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
               children: [
-                ClosetHeaderScreen(),
+                // ClosetHeaderScreen만 Provider로 감싸서 사용
+                ChangeNotifierProvider<ClosetFilterProvider>(
+                  create: (_) => ClosetFilterProvider(),
+                  child: ClosetHeaderScreen(),
+                ),
                 FittingScreen(),
                 MyPageScreen(),
               ],

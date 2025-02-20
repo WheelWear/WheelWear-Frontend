@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../models/closet_item.dart';
+import '../../closet_filter_provider.dart';
+import 'package:provider/provider.dart';
 
 enum Sky { midnight, viridian, cerulean }
 
@@ -25,8 +29,23 @@ class _SegmentedControlContentState extends State<SegmentedControlContent> {
     fontWeight: FontWeight.bold,
   );
 
+  // Sky -> ClosetCategory 매핑 함수
+  ClosetCategory _mapSkyToClosetCategory(Sky sky) {
+    switch (sky) {
+      case Sky.midnight:
+        return ClosetCategory.myClothes;     // '상의'
+      case Sky.viridian:
+        return ClosetCategory.wishlist;  // '하의'
+      case Sky.cerulean:
+        return ClosetCategory.donation;   // '원피스'
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    final segmentProvider = Provider.of<ClosetFilterProvider>(context);
+
     return CupertinoSlidingSegmentedControl<Sky>(
       backgroundColor: CupertinoColors.white,
       // thumbColor를 투명하게 처리하여 배경 변화가 보이지 않도록 함
@@ -37,6 +56,9 @@ class _SegmentedControlContentState extends State<SegmentedControlContent> {
           setState(() {
             _selectedSegment = value;
           });
+          // 글로벌 상태 변경: selectedClothType을 Sky.midnight로 고정
+          segmentProvider.selectedClothType = ClothType.Top;
+          context.read<ClosetFilterProvider>().updateClosetCategory(_mapSkyToClosetCategory(value));
         }
       },
       children: <Sky, Widget>{

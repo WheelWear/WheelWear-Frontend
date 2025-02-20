@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../models/closet_item.dart';
+import '../../closet_filter_provider.dart';
 
 enum Sky { midnight, viridian, cerulean }
 
@@ -20,6 +23,18 @@ class CategoryTabsState extends State<CategoryTabs> {
 
   );
 
+  // Sky -> ClothType 매핑 함수
+  ClothType _mapSkyToClothType(Sky sky) {
+    switch (sky) {
+      case Sky.midnight:
+        return ClothType.Top;     // '상의'
+      case Sky.viridian:
+        return ClothType.Bottom;  // '하의'
+      case Sky.cerulean:
+        return ClothType.Dress;   // '원피스'
+    }
+  }
+
   final TextStyle unselectedStyle = const TextStyle(
     color: CupertinoColors.black, // 선택되지 않았을 때의 색상
     fontWeight: FontWeight.bold,
@@ -27,6 +42,7 @@ class CategoryTabsState extends State<CategoryTabs> {
 
   @override
   Widget build(BuildContext context) {
+    // provider에서 selectedSegment 읽기
     return CupertinoSlidingSegmentedControl<Sky>(
       backgroundColor: CupertinoColors.white,
       onValueChanged: (Sky? value) {
@@ -34,6 +50,8 @@ class CategoryTabsState extends State<CategoryTabs> {
           setState(() {
             _selectedSegment = value;
           });
+          // Provider에 하위 분류(ClothType) 업데이트
+          context.read<ClosetFilterProvider>().updateClothType(_mapSkyToClothType(value));
         }
       },
       children: <Sky, Widget>{
