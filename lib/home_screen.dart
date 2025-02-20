@@ -2,7 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'features/Fitting/fitting_screen.dart';
 import 'features/MyPage/mypage_screen.dart';
-import 'features/Closet/closet_screen.dart';
+import 'features/Closet/closet_header_screen.dart';
+import 'package:provider/provider.dart';
+import 'features/Closet/providers/closet_filter_provider.dart';
+import 'features/Closet/providers/selection_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -41,7 +44,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
               children: [
-                ClosetScreen(),
+                MultiProvider(
+                  providers: [
+                    ChangeNotifierProvider<ClosetFilterProvider>(
+                      create: (_) => ClosetFilterProvider(),
+                    ),
+                    ChangeNotifierProvider<SelectionProvider>(
+                      create: (_) => SelectionProvider(),
+                    ),
+                  ],
+                  child: ClosetHeaderScreen(),
+                ),
                 FittingScreen(),
                 MyPageScreen(),
               ],
