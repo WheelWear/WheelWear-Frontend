@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'models/closet_item.dart';
+import '../models/closet_item.dart';
 
 /// ClosetFilterProvider: 메인 분류와 하위 분류를 함께 관리하는 상태 관리 클래스
 class ClosetFilterProvider extends ChangeNotifier {

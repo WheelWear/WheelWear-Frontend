@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'closet_item_screen.dart';
 import 'widgets/headers/segmented_control_content.dart';
 import 'widgets/headers/category_tabs.dart';
+import 'package:provider/provider.dart';
+import 'providers/selection_provider.dart';
 
 
 class ClosetHeaderScreen extends StatelessWidget {
@@ -16,7 +18,6 @@ class ClosetHeaderScreen extends StatelessWidget {
           "내 옷장",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
-        leading: Icon(CupertinoIcons.bag, color: CupertinoColors.black),
         backgroundColor: CupertinoColors.white,
         border: Border(
           bottom: BorderSide(color: CupertinoColors.systemGrey4, width: 1),
@@ -39,7 +40,7 @@ class ClosetHeaderScreen extends StatelessWidget {
                   Container(
                     height: 22,
                     margin: const EdgeInsets.only(right: 20),
-                    child: _buildSelectButton(),
+                    child: _buildSelectButton(context),
                   ),
                 ],
               ),
@@ -59,20 +60,29 @@ class ClosetHeaderScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSelectButton() {
+  Widget _buildSelectButton(BuildContext context) {
+    // Provider에서 선택 모드 상태를 읽어옴
+    final isSelectionMode = context.watch<SelectionProvider>().isSelectionMode;
     return Align(
       alignment: Alignment.centerRight,
       child: CupertinoButton(
-        padding: EdgeInsets.symmetric(horizontal: 18),
-        color: CupertinoColors.systemGrey4,
-        child: Text("선택",
-            style: TextStyle(
-                fontSize: 12,
-                color: CupertinoColors.white,
-                fontWeight: FontWeight.bold,
-            ),
+        padding: const EdgeInsets.symmetric(horizontal: 18),
+        // isSelectionMode 값에 따라 버튼 색상 변경
+        color: isSelectionMode ? CupertinoColors.activeGreen : CupertinoColors.systemGrey4,
+        child: Text(
+          // isSelectionMode 값에 따라 버튼 텍스트 변경
+          isSelectionMode ? "취소" : "선택",
+          style: const TextStyle(
+            fontSize: 12,
+            color: CupertinoColors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        onPressed: () {},
+        onPressed: () {
+          // 선택 모드 토글
+          context.read<SelectionProvider>().toggleSelectionMode();
+          debugPrint('선택 모드: ${context.read<SelectionProvider>().isSelectionMode}');
+        },
       ),
     );
   }

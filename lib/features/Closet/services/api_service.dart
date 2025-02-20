@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import '../models/closet_item.dart';
 import 'package:wheelwear_frontend/utils/token_storage.dart';
@@ -24,7 +25,7 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonList = json.decode(response.body);
-      print(jsonList);
+      debugPrint("데이터 받기 성공: ${jsonList.length}");
       return jsonList.map((json) => ClosetItem.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load closet items');

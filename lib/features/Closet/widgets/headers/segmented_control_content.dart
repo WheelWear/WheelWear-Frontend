@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/closet_item.dart';
-import '../../closet_filter_provider.dart';
+import '../../providers/closet_filter_provider.dart';
 import 'package:provider/provider.dart';
 
 enum Sky { midnight, viridian, cerulean }
