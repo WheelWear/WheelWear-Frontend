@@ -4,9 +4,14 @@ import 'features/Fitting/fitting_screen.dart';
 import 'features/MyPage/mypage_screen.dart';
 import 'features/Closet/closet_header_screen.dart';
 import 'package:provider/provider.dart';
-import 'features/Closet/providers/closet_filter_provider.dart';
-import 'features/Closet/providers/selection_provider.dart';
-import 'features/Closet/providers/closet_items_provider.dart';
+// Closet 관련 provider에 alias 부여
+import 'features/Closet/providers/closet_filter_provider.dart' as closet;
+import 'features/Closet/providers/selection_provider.dart' as closet;
+import 'features/Closet/providers/closet_items_provider.dart' as closet;
+// FittingCloset 관련 provider에 alias 부여
+import 'features/Fitting/fitting_closet/providers/closet_filter_provider.dart' as fitting;
+import 'features/Fitting/fitting_closet/providers/closet_items_provider.dart' as fitting;
+import 'features/Fitting/fitting_closet/providers/clothing_confirmation_provider.dart' as fitting;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -47,19 +52,29 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 MultiProvider(
                   providers: [
-                    ChangeNotifierProvider<ClosetFilterProvider>(
-                      create: (_) => ClosetFilterProvider(),
+                    ChangeNotifierProvider<closet.ClosetFilterProvider>(
+                      create: (_) => closet.ClosetFilterProvider(),
                     ),
-                    ChangeNotifierProvider<SelectionProvider>(
-                      create: (_) => SelectionProvider(),
+                    ChangeNotifierProvider<closet.SelectionProvider>(
+                      create: (_) => closet.SelectionProvider(),
                     ),
-                    ChangeNotifierProvider<ClosetItemsProvider>(
-                      create: (_) => ClosetItemsProvider(),
+                    ChangeNotifierProvider<closet.ClosetItemsProvider>(
+                      create: (_) => closet.ClosetItemsProvider(),
                     ),
                   ],
                   child: ClosetHeaderScreen(),
                 ),
-                FittingScreen(),
+                MultiProvider(
+                  providers: [
+                    ChangeNotifierProvider<fitting.ClothingConfirmationProvider>(
+                      create: (_) => fitting.ClothingConfirmationProvider(),
+                    ),
+                    ChangeNotifierProvider<fitting.ClosetItemsProvider>(
+                      create: (_) => fitting.ClosetItemsProvider(),
+                    ),
+                  ],
+                  child: FittingScreen(),
+                ),
                 MyPageScreen(),
               ],
             ),
@@ -128,5 +143,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-

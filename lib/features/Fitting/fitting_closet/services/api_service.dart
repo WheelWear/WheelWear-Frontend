@@ -46,6 +46,7 @@ class ApiService {
         if (response.statusCode == 200) {
           final List<dynamic> data = response.data;
           debugPrint("데이터 받기 성공: ${data.length}");
+          // debugPrint(data.toString());
           return data.map((json) => ClosetItem.fromJson(json)).toList();
         } else {
           throw Exception(
@@ -62,50 +63,6 @@ class ApiService {
         // await Future.delayed(const Duration(seconds: 2));
         await Future.delayed(const Duration(milliseconds: 1));
       }
-    }
-  }
-
-  // 주어진 clothId들을 삭제하는 함수 (재시도 없이 기존 로직)
-  Future<void> deleteClothes(List<int> clothIds) async {
-    try {
-      final deleteFutures = clothIds.map((id) => dio.delete('/api/clothes/$id/')).toList();
-      final responses = await Future.wait(deleteFutures);
-
-      for (final response in responses) {
-        if (response.statusCode != 204) {
-          debugPrint("삭제 실패: ${response.statusCode} - ${response.data}");
-          throw Exception('Failed to delete one or more clothes');
-        }
-      }
-      debugPrint("삭제 성공: cloth IDs = $clothIds");
-    } catch (error) {
-      debugPrint("deleteClothes 에러: $error");
-      throw Exception('Failed to delete one or more clothes');
-    }
-  }
-
-  // 주어진 clothId들을 donation으로 업데이트하는 함수 (재시도 없이 기존 로직)
-  Future<void> updateClothesToDonation(List<int> clothIds) async {
-    try {
-      final patchFutures = clothIds.map((id) {
-        return dio.patch(
-          '/api/clothes/$id/',
-          data: {"closet_category": "donation"},
-        );
-      }).toList();
-
-      final responses = await Future.wait(patchFutures);
-
-      for (final response in responses) {
-        if (response.statusCode != 200 && response.statusCode != 204) {
-          debugPrint("수정 실패: ${response.statusCode} - ${response.data}");
-          throw Exception('Failed to update one or more clothes to donation');
-        }
-      }
-      debugPrint("수정 성공: cloth IDs updated to donation = $clothIds");
-    } catch (error) {
-      debugPrint("updateClothesToDonation 에러: $error");
-      throw Exception('Failed to update one or more clothes to donation');
     }
   }
 }
