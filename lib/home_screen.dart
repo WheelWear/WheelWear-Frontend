@@ -32,8 +32,85 @@ class _HomeScreenState extends State<HomeScreen> {
   final Color activeColor = Color(0xFF3617CE);
   final Color inactiveColor = Color(0xFF555555);
 
-  // ✅ MyPageService 인스턴스 생성
-  final MyPageService myPageService = MyPageService(dio: Dio());
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<BodyImageProvider>(
+          create: (_) => BodyImageProvider(MyPageService(dio: Dio())),
+        ),
+      ],
+      child: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                },
+                children: [
+                  MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider<closet.ClosetFilterProvider>(
+                        create: (_) => closet.ClosetFilterProvider(),
+                      ),
+                      ChangeNotifierProvider<closet.SelectionProvider>(
+                        create: (_) => closet.SelectionProvider(),
+                      ),
+                      ChangeNotifierProvider<closet.ClosetItemsProvider>(
+                        create: (_) => closet.ClosetItemsProvider(),
+                      ),
+                    ],
+                    child: ClosetHeaderScreen(),
+                  ),
+                  MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider<fitting.ClothingConfirmationProvider>(
+                        create: (_) => fitting.ClothingConfirmationProvider(),
+                      ),
+                      ChangeNotifierProvider<fitting.ClosetItemsProvider>(
+                        create: (_) => fitting.ClosetItemsProvider(),
+                      ),
+                      ChangeNotifierProvider<fitting.FittingCreationProvider>(
+                        create: (_) => fitting.FittingCreationProvider(),
+                      ),
+                    ],
+                    child: FittingScreen(),
+                  ),
+                  MyPageScreen(),
+                ],
+              ),
+            ),
+            CupertinoTabBar(
+              backgroundColor: CupertinoColors.white,
+              activeColor: activeColor,
+              inactiveColor: inactiveColor,
+              height: 70,
+              items: [
+                BottomNavigationBarItem(
+                  icon: _buildTabItem(0, CupertinoIcons.square_grid_2x2, "옷장"),
+                  label: '',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildTabItem(1, CupertinoIcons.house, "피팅룸"),
+                  label: '',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildTabItem(2, CupertinoIcons.person, "마이페이지"),
+                  label: '',
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -43,89 +120,6 @@ class _HomeScreenState extends State<HomeScreen> {
       index,
       duration: Duration(milliseconds: 300),
       curve: Curves.easeInOut,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-              children: [
-                MultiProvider(
-                  providers: [
-                    ChangeNotifierProvider<closet.ClosetFilterProvider>(
-                      create: (_) => closet.ClosetFilterProvider(),
-                    ),
-                    ChangeNotifierProvider<closet.SelectionProvider>(
-                      create: (_) => closet.SelectionProvider(),
-                    ),
-                    ChangeNotifierProvider<closet.ClosetItemsProvider>(
-                      create: (_) => closet.ClosetItemsProvider(),
-                    ),
-                  ],
-                  child: ClosetHeaderScreen(),
-                ),
-                MultiProvider(
-                  providers: [
-                    ChangeNotifierProvider<fitting.ClothingConfirmationProvider>(
-                      create: (_) => fitting.ClothingConfirmationProvider(),
-                    ),
-                    ChangeNotifierProvider<fitting.ClosetItemsProvider>(
-                      create: (_) => fitting.ClosetItemsProvider(),
-                    ),
-                    ChangeNotifierProvider<fitting.FittingCreationProvider>(
-                      create: (_) => fitting.FittingCreationProvider(),
-                    ),
-                    ChangeNotifierProvider<BodyImageProvider>(
-                      create: (_) => BodyImageProvider(myPageService),
-                    ),
-                  ],
-                  child: FittingScreen(),
-                ),
-                MultiProvider(
-                  providers: [
-                    ChangeNotifierProvider<BodyImageProvider>(
-                      create: (_) => BodyImageProvider(myPageService),
-                    ),
-                  ],
-                  child: MyPageScreen(),
-                ),
-              ],
-            ),
-          ),
-          CupertinoTabBar(
-            backgroundColor: CupertinoColors.white,
-            activeColor: activeColor,
-            inactiveColor: inactiveColor,
-            height: 70,
-            items: [
-              BottomNavigationBarItem(
-                icon: _buildTabItem(0, CupertinoIcons.square_grid_2x2, "옷장"),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildTabItem(1, CupertinoIcons.house, "피팅룸"),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildTabItem(2, CupertinoIcons.person, "마이페이지"),
-                label: '',
-              ),
-            ],
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-          ),
-        ],
-      ),
     );
   }
 
@@ -166,3 +160,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
