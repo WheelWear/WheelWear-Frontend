@@ -4,6 +4,7 @@ import 'features/Fitting/fitting_screen.dart';
 import 'features/MyPage/mypage_screen.dart';
 import 'features/Closet/closet_header_screen.dart';
 import 'package:provider/provider.dart';
+
 // Closet 관련 provider에 alias 부여
 import 'features/Closet/providers/closet_filter_provider.dart' as closet;
 import 'features/Closet/providers/selection_provider.dart' as closet;
@@ -60,6 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ChangeNotifierProvider<closet.ClosetItemsProvider>(
                       create: (_) => closet.ClosetItemsProvider(),
+                    ),
+                    ChangeNotifierProvider<ClosetItemsProvider>(
+                      create: (_) => ClosetItemsProvider(),
                     ),
                   ],
                   child: ClosetHeaderScreen(),
