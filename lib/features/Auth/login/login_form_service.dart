@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
 import '../../../utils/token_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class LoginService {
   final String backendUrl;
+
   LoginService() : backendUrl = dotenv.env['BACKEND_URL'] ?? 'default_url';
 
-  Future<bool> login(String username, String password) async {
+  Future<Map<String, dynamic>?> login(String username, String password) async {
     final url = Uri.parse('$backendUrl/api/accounts/token/');
     final response = await http.post(
       url,
@@ -25,19 +25,22 @@ class LoginService {
       final responseData = jsonDecode(response.body);
       String? accessToken = responseData['access'];
       String? refreshToken = responseData['refresh'];
+      bool isFirstLogin = responseData['is_first_login'] ?? false;
 
       if (accessToken != null && refreshToken != null) {
         await TokenStorage.saveAccessToken(accessToken);
         await TokenStorage.saveRefreshToken(refreshToken);
         print("🟢 토큰 저장 완료!");
-        return true;
+
+        return {"success": true, "is_first_login": isFirstLogin};
       } else {
         print("🔴 로그인 성공했지만 토큰 없음.");
-        return false;
+        return {"success": false};
       }
     }
 
     print("🔴 로그인 실패: ${response.statusCode}");
-    return false;
+    return {"success": false};
   }
 }
+

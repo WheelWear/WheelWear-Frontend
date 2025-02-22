@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../home_screen.dart';
+
+import '../addinfo/body_info_screen.dart';
 import 'login_form_service.dart';
 
 class LoginFormScreen extends StatefulWidget {
@@ -39,17 +41,26 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
     });
 
     final loginService = LoginService();
-    bool success = await loginService.login(_idController.text, _passwordController.text);
+    final result = await loginService.login(_idController.text, _passwordController.text);
 
     setState(() {
       _isLoading = false;
     });
 
-    if (success) {
-      Navigator.pushReplacement(
-        context,
-        CupertinoPageRoute(builder: (context) => HomeScreen()),
-      );
+    if (result != null && result["success"] == true) {
+      bool isFirstLogin = result["is_first_login"];
+
+      if (isFirstLogin) {
+        Navigator.pushReplacement(
+          context,
+          CupertinoPageRoute(builder: (context) => BodyInfoScreen()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          CupertinoPageRoute(builder: (context) => HomeScreen()),
+        );
+      }
     } else {
       _showDialog("로그인 실패!🥲");
     }
