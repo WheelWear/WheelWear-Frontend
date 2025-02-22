@@ -70,7 +70,7 @@ class _FittingScreenState extends State<FittingScreen> {
           Center(
             child: Container(
               width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.6,
+              height: MediaQuery.of(context).size.height * 0.55,
               color: Color(0xC7EEEEEE),
               child: Center(
                 child: Image.asset(

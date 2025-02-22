@@ -1,19 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:wheelwear_frontend/utils/body_image_provider.dart';
 import 'features/Fitting/fitting_closet/providers/fitting_creation_provider.dart' as fitting;
 import 'features/Fitting/fitting_screen.dart';
 import 'features/MyPage/mypage_screen.dart';
 import 'features/Closet/closet_header_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // Closet 관련 provider에 alias 부여
 import 'features/Closet/providers/closet_filter_provider.dart' as closet;
 import 'features/Closet/providers/selection_provider.dart' as closet;
 import 'features/Closet/providers/closet_items_provider.dart' as closet;
+
 // FittingCloset 관련 provider에 alias 부여
 import 'features/Fitting/fitting_closet/providers/closet_filter_provider.dart' as fitting;
 import 'features/Fitting/fitting_closet/providers/closet_items_provider.dart' as fitting;
 import 'features/Fitting/fitting_closet/providers/clothing_confirmation_provider.dart' as fitting;
+
+import 'features/MyPage/mypage_service.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -23,9 +29,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 1;
   final PageController _pageController = PageController(initialPage: 1);
-
   final Color activeColor = Color(0xFF3617CE);
   final Color inactiveColor = Color(0xFF555555);
+
+  // ✅ MyPageService 인스턴스 생성
+  final MyPageService myPageService = MyPageService(dio: Dio());
 
   void _onItemTapped(int index) {
     setState(() {
@@ -63,9 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ChangeNotifierProvider<closet.ClosetItemsProvider>(
                       create: (_) => closet.ClosetItemsProvider(),
                     ),
-                    ChangeNotifierProvider<closet.ClosetItemsProvider>(
-                      create: (_) => closet.ClosetItemsProvider(),
-                    ),
                   ],
                   child: ClosetHeaderScreen(),
                 ),
@@ -80,10 +85,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     ChangeNotifierProvider<fitting.FittingCreationProvider>(
                       create: (_) => fitting.FittingCreationProvider(),
                     ),
+                    ChangeNotifierProvider<BodyImageProvider>(
+                      create: (_) => BodyImageProvider(myPageService),
+                    ),
                   ],
                   child: FittingScreen(),
                 ),
-                MyPageScreen(),
+                MultiProvider(
+                  providers: [
+                    ChangeNotifierProvider<BodyImageProvider>(
+                      create: (_) => BodyImageProvider(myPageService),
+                    ),
+                  ],
+                  child: MyPageScreen(),
+                ),
               ],
             ),
           ),

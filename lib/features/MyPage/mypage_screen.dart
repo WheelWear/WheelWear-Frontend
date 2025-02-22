@@ -1,13 +1,15 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:image_picker/image_picker.dart';
-import '../../utils/image_picker_util.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'profile_edit_screen.dart';
+import '../../utils/body_image_provider.dart';
 
 class MyPageScreen extends StatefulWidget {
   @override
   _MyPageScreenState createState() => _MyPageScreenState();
 }
+
 class AlarmScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class AlarmScreen extends StatelessWidget {
             size: 30,
             color: CupertinoColors.systemGrey,
           ),
-          onPressed: (){
+          onPressed: () {
             Navigator.pop(context);
           },
         ),
@@ -40,16 +42,26 @@ class AlarmScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("오늘 받은 알림",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              Text(
+                "오늘 받은 알림",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
               SizedBox(height: 10),
-              _buildNotificationCard("👕", "띠링~ 기부하실 시간!", "기부함이 다 찼어요. 방문수거 서비스를 신청해주세요.", "8h"),
+              _buildNotificationCard(
+                  "👕", "띠링~ 기부하실 시간!", "기부함이 다 찼어요. 방문수거 서비스를 신청해주세요.", "8h"),
               SizedBox(height: 20),
-              Text("이전 알림",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              Text(
+                "이전 알림",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
               SizedBox(height: 10),
-              _buildNotificationCard("🎉", "첫 기부 축하드립니다!", "방문수거 서비스는 어땠는지 평가해주세요.", "1yr"),
-              _buildNotificationCard("🚀", "입지 않는 옷을 기부해보는 건 어떠세요?", "내 옷장에서 기부함에 넣으면, 저희 WheelWear가 수거해 가요!", "1yr"),
+              _buildNotificationCard(
+                  "🎉", "첫 기부 축하드립니다!", "방문수거 서비스는 어땠는지 평가해주세요.", "1yr"),
+              _buildNotificationCard(
+                  "🚀",
+                  "입지 않는 옷을 기부해보는 건 어떠세요?",
+                  "내 옷장에서 기부함에 넣으면, 저희 WheelWear가 수거해 가요!",
+                  "1yr"),
             ],
           ),
         ),
@@ -57,7 +69,9 @@ class AlarmScreen extends StatelessWidget {
     );
   }
 }
-Widget _buildNotificationCard(String emoji, String title, String content, String time) {
+
+Widget _buildNotificationCard(
+    String emoji, String title, String content, String time) {
   return Container(
     padding: EdgeInsets.all(12),
     margin: EdgeInsets.only(bottom: 12),
@@ -76,7 +90,7 @@ Widget _buildNotificationCard(String emoji, String title, String content, String
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(emoji, style: TextStyle(fontSize: 24)), // 이모지
+        Text(emoji, style: TextStyle(fontSize: 24)),
         SizedBox(width: 10),
         Expanded(
           child: Column(
@@ -88,18 +102,21 @@ Widget _buildNotificationCard(String emoji, String title, String content, String
                   Expanded(
                     child: Text(
                       title,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style:
+                      TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Text(
                     time,
-                    style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey),
+                    style: TextStyle(
+                        fontSize: 12, color: CupertinoColors.systemGrey),
                   ),
                 ],
               ),
               SizedBox(height: 4),
-              Text(content, style: TextStyle(fontSize: 14, color: CupertinoColors.black)),
+              Text(content,
+                  style: TextStyle(fontSize: 14, color: CupertinoColors.black)),
             ],
           ),
         ),
@@ -109,16 +126,8 @@ Widget _buildNotificationCard(String emoji, String title, String content, String
 }
 
 class _MyPageScreenState extends State<MyPageScreen> {
-  File? _selectedImage;
-
-  void _pickImage() async {
-    File? image = await ImagePickerUtil.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _selectedImage = image;
-      });
-    }
-  }
+  // _selectedImage와 _pickImage()는 더 이상 사용하지 않고,
+  // BodyImageProvider에서 관리하는 bodyImageUrl를 활용합니다.
 
   @override
   Widget build(BuildContext context) {
@@ -127,21 +136,20 @@ class _MyPageScreenState extends State<MyPageScreen> {
         middle: Text("마이페이지"),
         automaticallyImplyLeading: false,
         trailing: CupertinoButton(
-            padding: EdgeInsets.zero,// 버튼 기본 패딩 제거
-            minSize: 0, //사이즈 작아서 안보이는거 방지
-            child: Icon(
-              CupertinoIcons.bell,
-              size: 30,
-              color: CupertinoColors.systemGrey,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) => AlarmScreen()),
-              );
-            },// 알림 아이콘
+          padding: EdgeInsets.zero, // 버튼 기본 패딩 제거
+          minSize: 0, // 사이즈 작아서 안보이는거 방지
+          child: Icon(
+            CupertinoIcons.bell,
+            size: 30,
+            color: CupertinoColors.systemGrey,
           ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              CupertinoPageRoute(builder: (context) => AlarmScreen()),
+            );
+          }, // 알림 아이콘
+        ),
       ),
       child: SafeArea(
         child: Padding(
@@ -187,7 +195,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
                   ),
                 ],
               ),
-              child: Icon(CupertinoIcons.person, size: 40, color: CupertinoColors.systemGrey),
+              child: Icon(CupertinoIcons.person,
+                  size: 40, color: CupertinoColors.systemGrey),
             ),
           ),
           Positioned(
@@ -220,10 +229,10 @@ class _MyPageScreenState extends State<MyPageScreen> {
             left: 200,
             top: 34,
             child: CupertinoButton(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5), // 패딩 추가
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               minSize: 0,
-              borderRadius: BorderRadius.circular(8), // 둥근 모서리
-              color: CupertinoColors.systemGrey6, // 연한 회색 배경
+              borderRadius: BorderRadius.circular(8),
+              color: CupertinoColors.systemGrey6,
               child: Text(
                 "로그아웃",
                 style: TextStyle(
@@ -277,72 +286,102 @@ class _MyPageScreenState extends State<MyPageScreen> {
     );
   }
 
-  // 🔹 사진 추가/변경 섹션
+// 🔹 사진 추가/변경 섹션 (Provider 사용)
   Widget _buildPhotoSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          height: 1,
-          color: CupertinoColors.systemGrey4,
-        ),
-        SizedBox(height: 30),
-        Center(
-          child: Column(
-            children: [
-              if (_selectedImage == null) ...[
-                Text("내 사진 없음", style: TextStyle(fontSize: 14, color: CupertinoColors.systemGrey)),
-                SizedBox(height: 10),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    child: Icon(CupertinoIcons.add, size: 120, color: CupertinoColors.systemGrey),
-                  ),
-                  onPressed: _pickImage,
-                ),
-              ],
+    return Consumer<BodyImageProvider>(
+      builder: (context, bodyImageProvider, child) {
+        final imageUrl = bodyImageProvider.bodyImageUrl;
+        final isUploading = bodyImageProvider.isUploading;
 
-              if (_selectedImage != null) ...[
-                ClipRRect(
-                  child: Image.file(_selectedImage!, width: 310, height: 410, fit: BoxFit.cover),
-                ),
-                SizedBox(height: 10),
-
-                Container(
-                  width: 310,
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: _pickImage,
-                    child: Container(
-                      width: 90,
-                      height: 28,
-                      decoration: ShapeDecoration(
-                        color: Color(0xFFC3C3C3),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.19),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 1,
+              color: CupertinoColors.systemGrey4,
+            ),
+            SizedBox(height: 30),
+            Center(
+              child: Column(
+                children: [
+                  if (imageUrl == null) ...[
+                    Text(
+                      "내 사진 없음",
+                      style: TextStyle(
+                          fontSize: 14, color: CupertinoColors.systemGrey),
+                    ),
+                    SizedBox(height: 10),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: Container(
+                        width: 80,
+                        height: 80,
+                        child: Icon(
+                          CupertinoIcons.add,
+                          size: 120,
+                          color: CupertinoColors.systemGrey,
                         ),
                       ),
-                      child: Center(
-                        child: Text(
-                          "사진 변경",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: CupertinoColors.white,
-                            fontWeight: FontWeight.w500,
+                      onPressed: isUploading
+                          ? null
+                          : () async {
+                        await bodyImageProvider.pickAndUploadMyPageBodyImage();
+                      },
+                    ),
+                  ] else
+                    ...[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.network(
+                          imageUrl,
+                          width: 310,
+                          height: 410,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        width: 310,
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: isUploading
+                              ? null
+                              : () async {
+                            await bodyImageProvider
+                                .pickAndUploadMyPageBodyImage();
+                          },
+                          child: Container(
+                            width: 90,
+                            height: 28,
+                            decoration: ShapeDecoration(
+                              color: isUploading ? Color(0xFFA0A0A0) : Color(
+                                  0xFFC3C3C3),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(0),
+                              ),
+                            ),
+                            child: Center(
+                              child: isUploading
+                                  ? CupertinoActivityIndicator()
+                                  : Text(
+                                "사진 변경",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: CupertinoColors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ],
+                    ],
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
-
 }
