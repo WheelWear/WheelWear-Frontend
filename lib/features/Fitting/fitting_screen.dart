@@ -41,10 +41,8 @@ class _FittingScreenState extends State<FittingScreen> {
       });
       return false; // 뒤로가더라도 페이지 종료 안 함
     }
-    // _showClosetScreen이 false여도 뒤로가기 동작을 막아서 페이지가 종료되지 않음
     return true;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +59,9 @@ class _FittingScreenState extends State<FittingScreen> {
     );
   }
 
-  // 기존 피팅 콘텐츠
+  // -----------------------
+  // 1) 메인 피팅 콘텐츠
+  // -----------------------
   Widget _buildMainContent() {
     return SingleChildScrollView(
       child: Column(
@@ -70,10 +70,7 @@ class _FittingScreenState extends State<FittingScreen> {
           Center(
             child: Container(
               width: double.infinity,
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height * 0.6,
+              height: MediaQuery.of(context).size.height * 0.6,
               color: Color(0xC7EEEEEE),
               child: Center(
                 child: Image.asset(
@@ -97,8 +94,7 @@ class _FittingScreenState extends State<FittingScreen> {
                   children: [
                     Text(
                       "옷 고르기",
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Spacer(),
                     GestureDetector(
@@ -117,8 +113,7 @@ class _FittingScreenState extends State<FittingScreen> {
                         child: Center(
                           child: Text(
                             "사진 변경",
-                            style: TextStyle(
-                                fontSize: 14, color: CupertinoColors.white),
+                            style: TextStyle(fontSize: 14, color: CupertinoColors.white),
                           ),
                         ),
                       ),
@@ -128,15 +123,13 @@ class _FittingScreenState extends State<FittingScreen> {
                 SizedBox(height: 5),
                 Text(
                   "피팅하고 싶은 옷을 모두 골라주세요!",
-                  style: TextStyle(
-                      fontSize: 14, color: CupertinoColors.systemGrey),
+                  style: TextStyle(fontSize: 14, color: CupertinoColors.systemGrey),
                 ),
                 SizedBox(height: 10),
-                Row(
-                  children: [
-                    _buildAddClothesButton(context, isDashed: false),
-                  ],
-                ),
+
+                // 2) 선택된 옷(최대 4개) + "+버튼" 한 줄에 배치
+                _buildSelectedClothesRow(),
+
               ],
             ),
           ),
@@ -145,20 +138,68 @@ class _FittingScreenState extends State<FittingScreen> {
     );
   }
 
-  // 버튼 위젯: 탭 시 내부 상태 변경으로 콘텐츠 전환
-  Widget _buildAddClothesButton(BuildContext context,
-      {required bool isDashed}) {
+  /// 2) 선택된 옷(최대 4개) + "+버튼"을 한 줄에 표시
+  Widget _buildSelectedClothesRow() {
+    // (1) 확정된 아이템의 id 목록
+    final chosenIds = Provider.of<fitting.ClothingConfirmationProvider>(context).confirmedClothes;
+
+    // (2) 전체 ClosetItemsProvider에서 로드된 아이템들
+    final closetItems = Provider.of<fitting.ClosetItemsProvider>(context).items;
+
+    // (3) chosenIds에 해당하는 아이템만 추출 (최대 4개)
+    final selectedItems = closetItems.where((item) => chosenIds.contains(item.id)).take(4).toList();
+
+    // 만약 선택된 옷이 아무것도 없으면, +버튼만 표시
+    if (selectedItems.isEmpty) {
+      return Row(
+        children: [
+          _buildAddClothesButton(context),
+        ],
+      );
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          // 선택된 옷들의 미리보기
+          for (final item in selectedItems) ...[
+            Container(
+              margin: EdgeInsets.only(right: 10),
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8),
+                image: DecorationImage(
+                  image: NetworkImage(item.clothImage),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ],
+
+          // +버튼 (옷 고르기)
+          _buildAddClothesButton(context),
+        ],
+      ),
+    );
+  }
+
+  // "+버튼" 위젯
+  Widget _buildAddClothesButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // 기존 Navigator.push 대신 내부 상태 변경으로 콘텐츠를 전환합니다.
+        // 옷 고르기 화면으로 전환
         _toggleContent();
       },
       child: Container(
-        width: 60,
-        height: 60,
+        width: 70,
+        height: 70,
         decoration: BoxDecoration(
           border: Border.all(
-            color: CupertinoColors.systemGrey,
+            color: CupertinoColors.systemGrey4,
             width: 2,
             style: BorderStyle.solid,
           ),
@@ -168,19 +209,20 @@ class _FittingScreenState extends State<FittingScreen> {
           child: Icon(
             CupertinoIcons.add,
             size: 30,
-            color: CupertinoColors.systemGrey,
+            color: CupertinoColors.systemGrey4,
           ),
         ),
       ),
     );
   }
 
+  // -----------------------
+  // 3) 피팅 클로젯 화면
+  // -----------------------
   Widget _buildClosetScreen() {
-    // 부모 context에서 이미 생성된 provider 인스턴스를 읽어옵니다.
-    final closetItemsProvider = Provider.of<fitting.ClosetItemsProvider>(
-        context, listen: false);
-    final clothingConfirmationProvider = Provider.of<fitting.ClothingConfirmationProvider>(
-        context, listen: false);
+    // 이미 최상위에서 생성된 Provider 인스턴스 사용
+    final closetItemsProvider = Provider.of<fitting.ClosetItemsProvider>(context, listen: false);
+    final clothingConfirmationProvider = Provider.of<fitting.ClothingConfirmationProvider>(context, listen: false);
 
     return MultiProvider(
       providers: [
@@ -201,3 +243,4 @@ class _FittingScreenState extends State<FittingScreen> {
     );
   }
 }
+

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'features/Fitting/fitting_closet/providers/fitting_creation_provider.dart' as fitting;
 import 'features/Fitting/fitting_screen.dart';
 import 'features/MyPage/mypage_screen.dart';
 import 'features/Closet/closet_header_screen.dart';
@@ -62,8 +63,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ChangeNotifierProvider<closet.ClosetItemsProvider>(
                       create: (_) => closet.ClosetItemsProvider(),
                     ),
-                    ChangeNotifierProvider<ClosetItemsProvider>(
-                      create: (_) => ClosetItemsProvider(),
+                    ChangeNotifierProvider<closet.ClosetItemsProvider>(
+                      create: (_) => closet.ClosetItemsProvider(),
                     ),
                   ],
                   child: ClosetHeaderScreen(),
@@ -75,6 +76,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ChangeNotifierProvider<fitting.ClosetItemsProvider>(
                       create: (_) => fitting.ClosetItemsProvider(),
+                    ),
+                    ChangeNotifierProvider<fitting.FittingCreationProvider>(
+                      create: (_) => fitting.FittingCreationProvider(),
                     ),
                   ],
                   child: FittingScreen(),
