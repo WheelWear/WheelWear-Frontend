@@ -11,8 +11,8 @@ class FittingAddClothesButton extends StatelessWidget {
     return GestureDetector(
       onTap: onToggleCloset,
       child: Container(
-        width: 70,
-        height: 70,
+        width: 80,
+        height: 80,
         decoration: BoxDecoration(
           border: Border.all(
             color: CupertinoColors.systemGrey4,

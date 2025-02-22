@@ -84,14 +84,13 @@ class FittingMainContent extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 5),
+                SizedBox(height: 2),
                 Text(
                   "피팅하고 싶은 옷을 모두 골라주세요!",
                   style: TextStyle(fontSize: 14, color: CupertinoColors.systemGrey),
                 ),
                 SizedBox(height: 10),
 
-                // ✅ 선택된 옷 표시
                 FittingSelectedClothes(onToggleCloset: onToggleCloset),
               ],
             ),

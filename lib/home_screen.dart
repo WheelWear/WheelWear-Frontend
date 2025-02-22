@@ -20,6 +20,7 @@ import 'features/Fitting/fitting_closet/providers/closet_items_provider.dart' as
 import 'features/Fitting/fitting_closet/providers/clothing_confirmation_provider.dart' as fitting;
 
 import 'features/MyPage/mypage_service.dart';
+import 'features/Fitting/fitting_service.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
