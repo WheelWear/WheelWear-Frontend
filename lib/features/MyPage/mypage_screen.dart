@@ -288,67 +288,58 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
 // 🔹 사진 추가/변경 섹션 (Provider 사용)
   Widget _buildPhotoSection() {
-    return Consumer<BodyImageProvider>(
+    return Consumer<BodyImageProvider?>(
       builder: (context, bodyImageProvider, child) {
-        final imageUrl = bodyImageProvider.bodyImageUrl;
-        final isUploading = bodyImageProvider.isUploading;
+        final imageUrl = bodyImageProvider?.bodyImageUrl;
+        final isUploading = bodyImageProvider?.isUploading ?? false;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 1,
-              color: CupertinoColors.systemGrey4,
-            ),
+            Container(height: 1, color: CupertinoColors.systemGrey4),
             SizedBox(height: 30),
             Center(
               child: Column(
                 children: [
                   if (imageUrl == null) ...[
-                    Text(
-                      "내 사진 없음",
-                      style: TextStyle(
-                          fontSize: 14, color: CupertinoColors.systemGrey),
-                    ),
+                    Text("내 사진 없음", style: TextStyle(
+                        fontSize: 14, color: CupertinoColors.systemGrey)),
                     SizedBox(height: 10),
                     CupertinoButton(
                       padding: EdgeInsets.zero,
                       child: Container(
                         width: 80,
                         height: 80,
-                        child: Icon(
-                          CupertinoIcons.add,
-                          size: 120,
-                          color: CupertinoColors.systemGrey,
-                        ),
+                        child: Icon(CupertinoIcons.add, size: 120,
+                            color: CupertinoColors.systemGrey),
                       ),
-                      onPressed: isUploading
-                          ? null
-                          : () async {
-                        await bodyImageProvider.pickAndUploadMyPageBodyImage();
+                      onPressed: isUploading ? null : () async {
+                        if (bodyImageProvider != null) {
+                          await bodyImageProvider.fetchBodyImage();
+                        } else {
+                          print("🔴 BodyImageProvider가 null입니다.");
+                        }
                       },
                     ),
                   ] else
                     ...[
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          imageUrl,
-                          width: 310,
-                          height: 410,
-                          fit: BoxFit.cover,
-                        ),
+                        child: Image.network(imageUrl, width: 310,
+                            height: 410,
+                            fit: BoxFit.cover),
                       ),
                       SizedBox(height: 10),
                       Container(
                         width: 310,
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
-                          onTap: isUploading
-                              ? null
-                              : () async {
-                            await bodyImageProvider
-                                .pickAndUploadMyPageBodyImage();
+                          onTap: isUploading ? null : () async {
+                            if (bodyImageProvider != null) {
+                              await bodyImageProvider.fetchBodyImage();
+                            } else {
+                              print("🔴 BodyImageProvider가 null입니다.");
+                            }
                           },
                           child: Container(
                             width: 90,
@@ -357,19 +348,16 @@ class _MyPageScreenState extends State<MyPageScreen> {
                               color: isUploading ? Color(0xFFA0A0A0) : Color(
                                   0xFFC3C3C3),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(0),
-                              ),
+                                  borderRadius: BorderRadius.circular(0)),
                             ),
                             child: Center(
                               child: isUploading
                                   ? CupertinoActivityIndicator()
                                   : Text(
                                 "사진 변경",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: CupertinoColors.white,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                style: TextStyle(fontSize: 14,
+                                    color: CupertinoColors.white,
+                                    fontWeight: FontWeight.w500),
                               ),
                             ),
                           ),

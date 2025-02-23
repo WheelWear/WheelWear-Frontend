@@ -26,8 +26,8 @@ class FittingSelectedClothes extends StatelessWidget {
               for (final item in selectedItems)
                 Container(
                   margin: EdgeInsets.only(right: 10),
-                  width: 80,
-                  height: 80,
+                  width: 70,
+                  height: 70,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     image: DecorationImage(
@@ -41,14 +41,14 @@ class FittingSelectedClothes extends StatelessWidget {
           ),
         ),
 
-        SizedBox(height: 3),
+        SizedBox(height: 5),
 
-        // ✅ "피팅하기" 버튼
+        // ✅ "피팅하기" 버튼 (고른 옷들의 하단, 오른쪽 정렬)
         if (selectedItems.isNotEmpty)
           Align(
             alignment: Alignment.centerRight,
             child: Padding(
-              padding: const EdgeInsets.only(top: 10, right: 10),
+              padding: const EdgeInsets.only(top: 10, right: 10), // 버튼 간격 조정
               child: _buildTryOnButton(context),
             ),
           ),
@@ -61,7 +61,7 @@ class FittingSelectedClothes extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.purple,
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       onPressed: () {
@@ -69,16 +69,17 @@ class FittingSelectedClothes extends StatelessWidget {
         // ✅ 피팅 로직 추가
       },
       child: Text(
-        "Try On",
+        "피팅하기",
         style: TextStyle(
           color: Colors.white,
-          fontSize: 20,
+          fontSize: 15,
           fontWeight: FontWeight.w500,
         ),
       ),
     );
   }
 }
+
 
 
 

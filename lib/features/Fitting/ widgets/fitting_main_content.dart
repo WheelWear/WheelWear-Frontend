@@ -4,10 +4,26 @@ import 'package:provider/provider.dart';
 import '../../../utils/body_image_provider.dart';
 import 'fitting_selected_clothes.dart';
 
-class FittingMainContent extends StatelessWidget {
+class FittingMainContent extends StatefulWidget {
   final VoidCallback onToggleCloset;
 
   FittingMainContent({required this.onToggleCloset});
+
+  @override
+  _FittingMainContentState createState() => _FittingMainContentState();
+}
+
+class _FittingMainContentState extends State<FittingMainContent> {
+  @override
+  void initState() {
+    super.initState();
+    _fetchBodyImage();
+  }
+
+  void _fetchBodyImage() async {
+    final bodyImageProvider = Provider.of<BodyImageProvider>(context, listen: false);
+    await bodyImageProvider.fetchBodyImage();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +81,7 @@ class FittingMainContent extends StatelessWidget {
                     GestureDetector(
                       onTap: () async {
                         await Provider.of<BodyImageProvider>(context, listen: false)
-                            .pickAndUploadMyPageBodyImage();
+                            .pickAndUploadBodyImage();
                       },
                       child: Container(
                         width: 90,
@@ -84,14 +100,13 @@ class FittingMainContent extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 2),
+                SizedBox(height: 5),
                 Text(
                   "피팅하고 싶은 옷을 모두 골라주세요!",
                   style: TextStyle(fontSize: 14, color: CupertinoColors.systemGrey),
                 ),
-                SizedBox(height: 10),
-
-                FittingSelectedClothes(onToggleCloset: onToggleCloset),
+                SizedBox(height: 7),
+                FittingSelectedClothes(onToggleCloset: widget.onToggleCloset),
               ],
             ),
           ),
