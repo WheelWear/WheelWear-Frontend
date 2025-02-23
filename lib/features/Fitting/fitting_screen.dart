@@ -43,7 +43,7 @@ class FittingScreen extends StatelessWidget {
                           "옷 고르기",
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        Spacer(), // ✅ 자동으로 여백 추가하여 오른쪽 정렬
+                        Spacer(), // 자동으로 여백 추가하여 오른쪽 정렬
                         GestureDetector(
                           onTap: () {
                             // 사진 변경 기능 추가

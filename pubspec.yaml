@@ -14,6 +14,10 @@ dependencies:
   flutter_dotenv: ^5.0.2
   flutter_svg: ^1.1.6
 
+  camera: ^0.11.0+1 # 최신 버전 확인 후 업데이트
+  #path_provider: ^2.0.15 # (사진 저장 시 필요)
+  #permission_handler: ^11.0.1 # (카메라 권한 요청)
+
   cupertino_icons: ^1.0.8
   http: ^1.3.0
   provider: ^6.1.2
