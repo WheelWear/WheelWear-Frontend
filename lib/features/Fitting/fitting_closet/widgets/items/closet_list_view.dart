@@ -3,35 +3,51 @@ import 'package:provider/provider.dart';
 import '../../models/closet_item.dart';
 import '../../providers/closet_filter_provider.dart';
 import '../../providers/selection_provider.dart';
-import 'add_cloth_button.dart';
+import '../../providers/fitting_creation_provider.dart';
 import 'closet_item_tile.dart';
 import 'select_mode_button.dart';
 
 class ClosetListView extends StatelessWidget {
   final List<ClosetItem> items;
-  const ClosetListView({Key? key, required this.items}) : super(key: key);
+  // FittingScreen에서 전달한 콜백을 저장하는 변수
+  final VoidCallback onExitClosetScreen;
 
-  // Provider에서 선택된 closetCategory와 clothType을 모두 만족하는 아이템만 반환하도록 필터링
+  const ClosetListView({
+    Key? key,
+    required this.items,
+    required this.onExitClosetScreen,
+  }) : super(key: key);
+
+  // Provider에서 선택된 closetCategory와 clothType을 만족하는 아이템만 반환
   List<ClosetItem> _filterItems(BuildContext context, List<ClosetItem> items) {
     final filterProvider = Provider.of<ClosetFilterProvider>(context, listen: true);
     return items.where((item) {
       return item.closetCategory == filterProvider.selectedClosetCategory &&
+          item.closetCategory != "donation" &&
           item.clothType == filterProvider.selectedClothType;
     }).toList();
   }
 
+  // ClosetItem의 clothType을 서버 전송용 key(String)로 변환하는 함수
+  String getClothKeyFromType(ClothType type) {
+    switch (type) {
+      case ClothType.Top:
+        return 'top_cloth';
+      case ClothType.Bottom:
+        return 'bottom_cloth';
+      case ClothType.Dress:
+        return 'dress_cloth';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // SelectionProvider에서 선택모드 여부 가져오기
-    final selectionProvider = Provider.of<SelectionProvider>(context, listen: true);
-    final isSelectionMode = selectionProvider.isSelectionMode;
-
     final filteredItems = _filterItems(context, items);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Stack(
         children: [
-          // 아이템이 하나도 없을 때, 배경에 emptyCloset 이미지 표시 (크기 조정 및 패딩 적용)
+          // 아이템이 하나도 없을 때, emptyCloset 이미지를 중앙에 표시
           if (filteredItems.isEmpty)
             Center(
               child: Padding(
@@ -44,27 +60,32 @@ class ClosetListView extends StatelessWidget {
               ),
             ),
           GridView.builder(
-            itemCount: filteredItems.length + 1, // 첫번째 항목은 AddClothButton 위젯
+            itemCount: filteredItems.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
             itemBuilder: (context, index) {
-              if (index == 0) {
-                return const AddClothButton();
-              } else {
-                final item = filteredItems[index - 1];
-                return ClosetItemTile(item: item);
-              }
+              final item = filteredItems[index];
+              return Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    final outfitCreation = Provider.of<FittingCreationProvider>(context, listen: false);
+                    final key = getClothKeyFromType(item.clothType);
+                    outfitCreation.setClothId(key, item.id);
+                  },
+                  child: ClosetItemTile(item: item),
+                ),
+              );
             },
           ),
-          if (isSelectionMode)
-            Positioned(
-              bottom: 16,
-              right: 16,
-              child: SelectModeButton(),
-            ),
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: SelectModeButton(onExitClosetScreen: onExitClosetScreen),
+          ),
         ],
       ),
     );
