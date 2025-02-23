@@ -32,10 +32,12 @@ class _FittingResultImageSliderState extends State<_FittingResultImageSlider> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height; // ✅ 화면 높이 가져오기
+
     return Column(
       children: [
         Container(
-          height: 400,
+          height: screenHeight * 0.6, // ✅ 화면 높이의 60%로 이미지 크기 조절
           child: PageView.builder(
             controller: _pageController,
             itemCount: widget.fittingImages.length,
@@ -77,4 +79,3 @@ class _FittingResultImageSliderState extends State<_FittingResultImageSlider> {
     );
   }
 }
-

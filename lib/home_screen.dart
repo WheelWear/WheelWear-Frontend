@@ -82,9 +82,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ChangeNotifierProvider<fitting.FittingCreationProvider>(
                         create: (_) => fitting.FittingCreationProvider(),
                       ),
-                      ChangeNotifierProvider<FittingResultProvider>(
-                        create: (_) => FittingResultProvider(),
-                      ),
                     ],
                     child: FittingScreen(),
                   ),

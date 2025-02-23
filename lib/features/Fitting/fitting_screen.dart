@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import ' widgets/fitting_closet_content.dart';
 import ' widgets/fitting_main_content.dart';
+import 'FittingResult/fitting_result_screen.dart';
 
 class FittingScreen extends StatefulWidget {
   @override
@@ -55,12 +56,14 @@ class _FittingScreenState extends State<FittingScreen> {
                 children: [
                   Expanded(
                     child: _showClosetScreen
-                        ? FittingClosetContent(onExitClosetScreen: _exitClosetScreen)
+                        ? FittingClosetContent(
+                        onExitClosetScreen: _exitClosetScreen)
                         : FittingMainContent(
                       onToggleCloset: _toggleContent,
                       setLoading: _setLoading,
                     ),
                   ),
+                  // _buildButton(), // ⭐️⭐테스트용 버튼
                 ],
               ),
             ),
@@ -83,4 +86,22 @@ class _FittingScreenState extends State<FittingScreen> {
       ),
     );
   }
+
+  // /// ⭐️⭐️ 완성된 코디 View 보기 위한 Test 버튼! 지우셔도 됩니다! ⭐️⭐️
+  // Widget _buildButton() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 10),
+  //     child: CupertinoButton(
+  //       color: Colors.purpleAccent, // 🔹 버튼 색상 추가
+  //       child: Text(
+  //           "Test", style: TextStyle(color: Colors.white, fontSize: 5)),
+  //       onPressed: () {
+  //         Navigator.push(
+  //           context,
+  //           MaterialPageRoute(builder: (context) => FittingResultScreen(safeMode: true),)
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 }
