@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utils/body_image_provider.dart';
-import '../../Closet/models/closet_item.dart';
+import '../fitting_closet/models/closet_item.dart';
 import '../FittingResult/fitting_result_provider.dart';
-import '../FittingResult/widgets/fitting_result_images.dart';
 import '../fitting_closet/providers/closet_items_provider.dart';
 import '../fitting_closet/providers/clothing_confirmation_provider.dart';
 import '../FittingResult/fitting_result_screen.dart';

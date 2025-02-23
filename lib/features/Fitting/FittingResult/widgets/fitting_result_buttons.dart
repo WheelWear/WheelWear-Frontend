@@ -7,17 +7,27 @@ class FittingResultButtons extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildTextButton(CupertinoIcons.back, "처음으로", () {
-            Navigator.pop(context);
-          }),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: _buildTextButton(CupertinoIcons.back, "처음으로", () {
+                Navigator.pop(context);
+              }),
+            ),
+          ),
           _buildMainButton(CupertinoIcons.arrow_down_circle_fill, "코디에 저장", () {
             print("✅ 코디 저장 기능");
           }),
-          _buildTextButton(CupertinoIcons.arrow_right_arrow_left, "상의 매칭하기", () {
-            print("✅ 상의 매칭 기능");
-          }),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: _buildTextButton(CupertinoIcons.arrow_right_arrow_left, "상의 매칭하기", () {
+                print("✅ 상의 매칭 기능");
+              }),
+            ),
+          ),
         ],
       ),
     );
