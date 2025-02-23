@@ -23,7 +23,6 @@ class BodyImageProvider extends ChangeNotifier {
   bool get isFetching => _isFetching;
   bool get isUploading => _isUploading;
 
-  /// 🟢 로그인 후 바디 이미지 가져오기
   Future<void> fetchBodyImage() async {
     if (_isFetching) return;
 

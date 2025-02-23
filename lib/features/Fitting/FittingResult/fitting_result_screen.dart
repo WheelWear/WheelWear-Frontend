@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'fitting_result_provider.dart';
 import 'widgets/fitting_result_images.dart';
 import 'widgets/fitting_result_buttons.dart';
 import 'widgets/fitting_ai_size_recommend.dart';
 
 class FittingResultScreen extends StatelessWidget {
-  final List<String> fittingImages; // ✅ 피팅된 이미지 리스트
-
-  FittingResultScreen({required this.fittingImages});
-
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text("완성된 코디", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -21,7 +20,7 @@ class FittingResultScreen extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                FittingResultImages(fittingImages: fittingImages), // ✅ 이미지 슬라이더
+                FittingResultImages(), // ✅ Provider에서 가져오므로 fittingImages 필요 없음
                 SizedBox(height: 10),
                 FittingAISizeRecommend(), // ✅ AI 사이즈 추천 버튼
               ],

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wheelwear_frontend/utils/body_image_provider.dart';
+import 'features/Fitting/FittingResult/fitting_result_provider.dart';
 import 'features/Fitting/fitting_closet/providers/fitting_creation_provider.dart' as fitting;
 import 'features/Fitting/fitting_screen.dart';
 import 'features/MyPage/mypage_screen.dart';
@@ -40,6 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ChangeNotifierProvider<BodyImageProvider>(
           create: (_) => BodyImageProvider(MyPageService(dio: Dio())),
         ),
+        ChangeNotifierProvider<FittingResultProvider>( // ✅ 추가
+          create: (_) => FittingResultProvider(),
+        ),
       ],
       child: SafeArea(
         child: Column(
@@ -77,6 +81,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       ChangeNotifierProvider<fitting.FittingCreationProvider>(
                         create: (_) => fitting.FittingCreationProvider(),
+                      ),
+                      ChangeNotifierProvider<FittingResultProvider>( // ✅ 피팅 결과 저장을 위해 추가!
+                        create: (_) => FittingResultProvider(),
                       ),
                     ],
                     child: FittingScreen(),
@@ -161,4 +168,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

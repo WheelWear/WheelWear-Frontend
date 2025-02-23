@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../fitting_result_provider.dart';
 
-class FittingResultImages extends StatefulWidget {
-  final List<String> fittingImages;
-
-  FittingResultImages({required this.fittingImages});
-
+class FittingResultImages extends StatelessWidget {
   @override
-  _FittingResultImagesState createState() => _FittingResultImagesState();
+  Widget build(BuildContext context) {
+    final fittingResultProvider = Provider.of<FittingResultProvider>(context);
+    final fittingImages = fittingResultProvider.fittingImages;
+
+    return Scaffold(
+      appBar: AppBar(title: Text("피팅 결과")),
+      body: fittingImages.isEmpty
+          ? Center(child: Text("아직 생성된 피팅 이미지가 없습니다."))
+          : _FittingResultImageSlider(fittingImages: fittingImages),
+    );
+  }
 }
 
-class _FittingResultImagesState extends State<FittingResultImages> {
+class _FittingResultImageSlider extends StatefulWidget {
+  final List<String> fittingImages;
+
+  _FittingResultImageSlider({required this.fittingImages});
+
+  @override
+  _FittingResultImageSliderState createState() => _FittingResultImageSliderState();
+}
+
+class _FittingResultImageSliderState extends State<_FittingResultImageSlider> {
   int _currentIndex = 0;
   final PageController _pageController = PageController();
 
@@ -60,3 +77,4 @@ class _FittingResultImagesState extends State<FittingResultImages> {
     );
   }
 }
+
