@@ -1,13 +1,13 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-
 import '../../../utils/token_storage.dart';
 
 class LoginService {
-  final String baseUrl = "http://34.64.187.25:8000/api/accounts/token/";
+  final String? baseUrl = dotenv.env['BACKEND_URL'];
 
   Future<bool> login(String username, String password) async {
-    final url = Uri.parse(baseUrl);
+    final url = Uri.parse('$baseUrl/api/accounts/token/');
     final response = await http.post(
       url,
       headers: {"Content-Type": "application/json"},
