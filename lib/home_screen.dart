@@ -6,6 +6,7 @@ import 'features/Closet/closet_header_screen.dart';
 import 'package:provider/provider.dart';
 import 'features/Closet/providers/closet_filter_provider.dart';
 import 'features/Closet/providers/selection_provider.dart';
+import 'features/Closet/cloth_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -55,7 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                   child: ClosetHeaderScreen(),
                 ),
-                FittingScreen(),
+                //FittingScreen(),
+                ClothScreen(),
                 MyPageScreen(),
               ],
             ),
