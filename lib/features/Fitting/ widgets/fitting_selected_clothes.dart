@@ -29,9 +29,6 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
     final fittingResultProvider = Provider.of<FittingResultProvider>(context, listen: false);
     final fittingService = FittingService();
 
-    // // ✅ 이전 결과 초기화
-    // fittingResultProvider.clearFittingImages();
-
     // ✅ 바디 이미지 ID가 없으면 요청 차단
     if (bodyImageProvider.bodyImageID == null) {
       print("🔴 바디 이미지가 설정되지 않았습니다!");
@@ -59,18 +56,21 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
         "title": "생성된 옷",
         "is_favorite": false,
         "body_image": bodyImageProvider.bodyImageID,
-        "top_cloth": "",
-        "bottom_cloth": "",
-        "dress_cloth": "",
       };
 
-      // ✅ 선택된 옷 중 한 종류만 요청에 포함
-      if (item.clothType == "top_cloth") {
-        requestData["top_cloth"] = item.id;
-      } else if (item.clothType == "bottom_cloth") {
-        requestData["bottom_cloth"] = item.id;
-      } else if (item.clothType == "dress_cloth") {
-        requestData["dress_cloth"] = item.id;
+      // ✅ 선택된 옷을 올바른 key 값으로 할당
+      switch (item.clothType) {
+        case ClothType.Top:
+          requestData["top_cloth"] = item.id;
+          break;
+        case ClothType.Bottom:
+          requestData["bottom_cloth"] = item.id;
+          break;
+        case ClothType.Dress:
+          requestData["dress_cloth"] = item.id;
+          break;
+        default:
+          throw Exception("알 수 없는 ClothType: ${item.clothType}"); // 예외 처리
       }
 
       print("🟡 최종 요청 데이터: $requestData");
@@ -85,7 +85,6 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
       // }
     }
 
-
     setState(() {
       _isLoading = false;
     });
@@ -96,11 +95,13 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
       MaterialPageRoute(
         builder: (context) => ChangeNotifierProvider.value(
           value: fittingResultProvider,
-          child: FittingResultImages(),
+          child: FittingResultScreen(),
         ),
       ),
     );
   }
+
+
 
   @override
   Widget build(BuildContext context) {

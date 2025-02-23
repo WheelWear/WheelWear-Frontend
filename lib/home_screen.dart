@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ChangeNotifierProvider<BodyImageProvider>(
           create: (_) => BodyImageProvider(MyPageService(dio: Dio())),
         ),
-        ChangeNotifierProvider<FittingResultProvider>( // ✅ 추가
+        ChangeNotifierProvider<FittingResultProvider>(
           create: (_) => FittingResultProvider(),
         ),
       ],
@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ChangeNotifierProvider<fitting.FittingCreationProvider>(
                         create: (_) => fitting.FittingCreationProvider(),
                       ),
-                      ChangeNotifierProvider<FittingResultProvider>( // ✅ 피팅 결과 저장을 위해 추가!
+                      ChangeNotifierProvider<FittingResultProvider>(
                         create: (_) => FittingResultProvider(),
                       ),
                     ],
