@@ -9,7 +9,6 @@ class FittingResultImages extends StatelessWidget {
     final fittingImages = fittingResultProvider.fittingImages;
 
     return Scaffold(
-      appBar: AppBar(title: Text("피팅 결과")),
       body: fittingImages.isEmpty
           ? Center(child: Text("아직 생성된 피팅 이미지가 없습니다."))
           : _FittingResultImageSlider(fittingImages: fittingImages),
@@ -32,12 +31,11 @@ class _FittingResultImageSliderState extends State<_FittingResultImageSlider> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height; // ✅ 화면 높이 가져오기
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Column(
       children: [
         Container(
-          height: screenHeight * 0.6, // ✅ 화면 높이의 60%로 이미지 크기 조절
           child: PageView.builder(
             controller: _pageController,
             itemCount: widget.fittingImages.length,
