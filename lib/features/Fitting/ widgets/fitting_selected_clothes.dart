@@ -11,17 +11,18 @@ import '../fitting_service.dart';
 
 class FittingSelectedClothes extends StatefulWidget {
   final VoidCallback onToggleCloset;
+  final Function(bool) setLoading; // 🔵 로딩 상태를 업데이트하는 함수 추가
 
-  FittingSelectedClothes({required this.onToggleCloset});
+  FittingSelectedClothes({required this.onToggleCloset, required this.setLoading});
 
   @override
   _FittingSelectedClothesState createState() => _FittingSelectedClothesState();
 }
 
 class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
-  bool _isLoading = false; // 로딩 상태
+  bool _isLoading = false;
 
-  /// 🟢 피팅 요청 실행 (한 번에 하나씩 요청)
+  /// 🟢 피팅 요청 실행
   Future<void> _startFitting() async {
     final bodyImageProvider = Provider.of<BodyImageProvider>(context, listen: false);
     final clothingConfirmationProvider = Provider.of<ClothingConfirmationProvider>(context, listen: false);
@@ -29,13 +30,11 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
     final fittingResultProvider = Provider.of<FittingResultProvider>(context, listen: false);
     final fittingService = FittingService();
 
-    // ✅ 바디 이미지 ID가 없으면 요청 차단
     if (bodyImageProvider.bodyImageID == null) {
       print("🔴 바디 이미지가 설정되지 않았습니다!");
       return;
     }
 
-    // ✅ 선택된 옷 ID 가져오기
     final chosenIds = clothingConfirmationProvider.confirmedClothes;
     final selectedItems = closetItemsProvider.items
         .where((item) => chosenIds.contains(item.id))
@@ -51,6 +50,8 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
       _isLoading = true;
     });
 
+    widget.setLoading(true); // 🔴 화면 전체 로딩 활성화
+
     for (var item in selectedItems) {
       final Map<String, dynamic> requestData = {
         "title": "생성된 옷",
@@ -58,7 +59,6 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
         "body_image": bodyImageProvider.bodyImageID,
       };
 
-      // ✅ 선택된 옷을 올바른 key 값으로 할당
       switch (item.clothType) {
         case ClothType.Top:
           requestData["top_cloth"] = item.id;
@@ -70,26 +70,20 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
           requestData["dress_cloth"] = item.id;
           break;
         default:
-          throw Exception("알 수 없는 ClothType: ${item.clothType}"); // 예외 처리
+          throw Exception("알 수 없는 ClothType: ${item.clothType}");
       }
 
       print("🟡 최종 요청 데이터: $requestData");
 
-      // ✅ 요청 보내기
-      final imageUrl = await fittingService.generateFittingImage(context, requestData);
-
-      // if (imageUrl != null) {
-      //   fittingResultProvider.addFittingImage(imageUrl);
-      // } else {
-      //   print("🔴 피팅 요청 실패: $item");
-      // }
+      await fittingService.generateFittingImage(context, requestData);
     }
 
     setState(() {
       _isLoading = false;
     });
 
-    // ✅ 결과 페이지로 이동
+    widget.setLoading(false); // 🔴 화면 전체 로딩 비활성화
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -100,8 +94,6 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
       ),
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +110,6 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ✅ 선택된 옷 리스트
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
@@ -158,14 +149,10 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
                   ),
                 ),
               ),
-
             ],
           ),
         ),
-
         SizedBox(height: 5),
-
-        // ✅ "피팅하기" 버튼
         if (selectedItems.isNotEmpty)
           Align(
             alignment: Alignment.centerRight,
@@ -178,9 +165,7 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 onPressed: _isLoading ? null : _startFitting,
-                child: _isLoading
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : Text(
+                child: Text(
                   "피팅하기",
                   style: TextStyle(
                     color: Colors.white,

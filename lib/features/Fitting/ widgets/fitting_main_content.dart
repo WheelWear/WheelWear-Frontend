@@ -6,8 +6,9 @@ import 'fitting_selected_clothes.dart';
 
 class FittingMainContent extends StatefulWidget {
   final VoidCallback onToggleCloset;
+  final Function(bool) setLoading; // 🔴 추가됨
 
-  FittingMainContent({required this.onToggleCloset});
+  FittingMainContent({required this.onToggleCloset, required this.setLoading}); // 🔴 수정됨
 
   @override
   _FittingMainContentState createState() => _FittingMainContentState();
@@ -106,7 +107,10 @@ class _FittingMainContentState extends State<FittingMainContent> {
                   style: TextStyle(fontSize: 14, color: CupertinoColors.systemGrey),
                 ),
                 SizedBox(height: 7),
-                FittingSelectedClothes(onToggleCloset: widget.onToggleCloset),
+                FittingSelectedClothes(
+                  onToggleCloset: widget.onToggleCloset,
+                  setLoading: widget.setLoading, // 🔴 추가됨
+                ),
               ],
             ),
           ),
