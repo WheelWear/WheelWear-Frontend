@@ -24,7 +24,7 @@ class FittingResultScreen extends StatelessWidget {
         children: [
           SizedBox(height: 10),
           Container(
-            height: screenHeight * 0.6, // 화면 높이의 60% 적용
+            height: screenHeight * 0.6,
             child: Container(
               height: MediaQuery.of(context).size.height * 0.6,
               child: FittingResultImages(),

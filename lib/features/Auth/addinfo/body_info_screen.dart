@@ -14,6 +14,7 @@ class _BodyInfoScreenState extends State<BodyInfoScreen> {
   final TextEditingController armController = TextEditingController();
   final TextEditingController waistController = TextEditingController();
   bool _isLoading = false;
+  String _selectedGender = "M";
 
   void _showDialog(String title, String message) {
     showCupertinoDialog(
@@ -33,26 +34,18 @@ class _BodyInfoScreenState extends State<BodyInfoScreen> {
     );
   }
 
-  // 🔹 체형 정보 제출 API 호출
   Future<void> _submitBodyInfo() async {
-    if (shoulderController.text.isEmpty ||
-        chestController.text.isEmpty ||
-        armController.text.isEmpty ||
-        waistController.text.isEmpty) {
-      _showDialog("입력 오류", "모든 필드를 입력해 주세요.");
-      return;
-    }
-
     setState(() {
       _isLoading = true;
     });
 
     final bodyInfoService = BodyInfoService();
     bool success = await bodyInfoService.submitBodyInfo(
-      shoulderWidth: double.parse(shoulderController.text),
-      chestCircumference: double.parse(chestController.text),
-      armLength: double.parse(armController.text),
-      waistCircumference: double.parse(waistController.text),
+      shoulderWidth: double.tryParse(shoulderController.text),
+      chestCircumference: double.tryParse(chestController.text),
+      armLength: double.tryParse(armController.text),
+      waistCircumference: double.tryParse(waistController.text),
+      gender: _selectedGender,
     );
 
     setState(() {
@@ -60,11 +53,18 @@ class _BodyInfoScreenState extends State<BodyInfoScreen> {
     });
 
     if (success) {
-      _showDialog("성공", "체형 정보가 저장되었습니다!");
-      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => HomeScreen())); // ✅ 홈으로 이동
+      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => HomeScreen()));
     } else {
       _showDialog("오류", "체형 정보를 저장하는데 실패했습니다. 다시 시도해주세요.");
     }
+  }
+
+  // ✅ "건너뛰기" 버튼 클릭 시 홈 화면으로 이동
+  void _skipToHome() {
+    Navigator.pushReplacement(
+      context,
+      CupertinoPageRoute(builder: (context) => HomeScreen()),
+    );
   }
 
   @override
@@ -73,8 +73,8 @@ class _BodyInfoScreenState extends State<BodyInfoScreen> {
       navigationBar: CupertinoNavigationBar(
         middle: Text("체형정보 입력", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400)),
         trailing: GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Text("건너뛰기", style: TextStyle(color: CupertinoColors.inactiveGray, fontSize: 16)),
+          onTap: _skipToHome, // ✅ "건너뛰기" 버튼 클릭 시 홈 화면으로 이동
+          child: Text("건너뛰기", style: TextStyle(color: CupertinoColors.activeBlue, fontSize: 16)),
         ),
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
@@ -95,43 +95,34 @@ class _BodyInfoScreenState extends State<BodyInfoScreen> {
               ),
               SizedBox(height: 30),
 
-              // ✅ 입력 필드 컨테이너
-              Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildInputField("어깨 너비", "어깨 너비를 입력해주세요(cm)", shoulderController),
-                    SizedBox(height: 12),
-                    _buildInputField("가슴 둘레", "가슴 둘레를 입력해주세요(cm)", chestController),
-                    SizedBox(height: 12),
-                    _buildInputField("팔 길이", "팔 길이를 입력해주세요(cm)", armController),
-                    SizedBox(height: 12),
-                    _buildInputField("허리 둘레", "허리 둘레를 입력해주세요(cm)", waistController),
-                  ],
-                ),
-              ),
+              // ✅ 성별 선택 UI (체크 아이콘 적용)
+              _buildGenderSelector(),
+              SizedBox(height: 20),
+
+              // ✅ 체형 정보 입력 필드
+              _buildInputField("어깨 너비", "어깨 너비를 입력해주세요(cm)", shoulderController),
+              SizedBox(height: 12),
+              _buildInputField("가슴 둘레", "가슴 둘레를 입력해주세요(cm)", chestController),
+              SizedBox(height: 12),
+              _buildInputField("팔 길이", "팔 길이를 입력해주세요(cm)", armController),
+              SizedBox(height: 12),
+              _buildInputField("허리 둘레", "허리 둘레를 입력해주세요(cm)", waistController),
 
               SizedBox(height: 30),
 
               // ✅ 확인 버튼
               Container(
-                width: 300, // 원하는 버튼 너비
+                width: 300,
                 child: CupertinoButton(
                   color: CupertinoColors.black,
                   borderRadius: BorderRadius.circular(10),
                   padding: EdgeInsets.symmetric(vertical: 10),
                   child: _isLoading
-                      ? CupertinoActivityIndicator() // ✅ 로딩 중이면 인디케이터 표시
+                      ? CupertinoActivityIndicator()
                       : Text("확인", style: TextStyle(fontSize: 16, color: CupertinoColors.white, fontWeight: FontWeight.w500)),
                   onPressed: _isLoading ? null : _submitBodyInfo,
                 ),
               ),
-
-              SizedBox(height: 16),
             ],
           ),
         ),
@@ -139,7 +130,54 @@ class _BodyInfoScreenState extends State<BodyInfoScreen> {
     );
   }
 
-  // 🔹 입력 필드 공통 위젯
+  // 🔹 성별 선택 위젯 (체크 아이콘 적용)
+  Widget _buildGenderSelector() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("성별", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+        SizedBox(height: 8),
+        Row(
+          children: [
+            _buildGenderButton("M", "남성"),
+            SizedBox(width: 16),
+            _buildGenderButton("F", "여성"),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // 🔹 성별 버튼
+  Widget _buildGenderButton(String value, String label) {
+    bool isSelected = _selectedGender == value;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedGender = value;
+        });
+      },
+      child: Row(
+        children: [
+          Icon(
+            isSelected ? CupertinoIcons.check_mark_circled_solid : CupertinoIcons.circle,
+            color: isSelected ? CupertinoColors.black : CupertinoColors.systemGrey,
+            size: 22,
+          ),
+          SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: CupertinoColors.black,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildInputField(String label, String placeholder, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
