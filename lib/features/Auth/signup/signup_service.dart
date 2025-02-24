@@ -8,7 +8,7 @@ class SignupService {
   SignupService() : backendUrl = dotenv.env['BACKEND_URL'] ?? 'default_url';
 
   Future<bool> signUp(User user) async {
-    final url = Uri.parse(backendUrl);
+    final url = Uri.parse('$backendUrl/api/accounts/register/');
 
     // 요청 보내기 전 로그
     print("[SignupService] 회원가입 요청: $backendUrl, body: ${jsonEncode(user.toJson())}");

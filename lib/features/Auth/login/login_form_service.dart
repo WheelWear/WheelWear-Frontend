@@ -7,7 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class LoginService {
   final String? baseUrl = dotenv.env['BACKEND_URL'];
 
-  Future<bool> login(String username, String password) async {
+  Future<Map<String, dynamic>> login(String username, String password) async {
     final url = Uri.parse('$baseUrl/api/accounts/token/');
     final response = await http.post(
       url,
@@ -42,3 +42,4 @@ class LoginService {
     return {"success": false};
   }
 }
+
