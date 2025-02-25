@@ -13,7 +13,12 @@ class FittingAISizeRecommend extends StatelessWidget {
             // 버튼 누르면 모달창을 띄웁니다.
             showDialog(
               context: context,
-              builder: (context) => const AISizeRecommendModal(),
+              builder: (context) => const AISizeRecommendModal(
+                recommendedSize: "M",
+                recommendedSizeDescription: "M 사이즈를 추천드립니다.",
+                errorFlag: false,
+                isLoading: false,
+              ),
             );
           },
           icon: Icon(Icons.auto_awesome, color: Colors.orange),

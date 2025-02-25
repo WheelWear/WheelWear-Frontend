@@ -81,6 +81,7 @@ class ProfileService {
           request.fields[key] = value.toString();
         });
         // 파일 첨부 (서버에서 필드명은 'profile_picture'로 인식)
+        print(profileImage.path);
         request.files.add(await http.MultipartFile.fromPath('profile_picture', profileImage.path));
 
         var streamedResponse = await request.send();
@@ -96,6 +97,7 @@ class ProfileService {
         }
       } else {
         // profileImage가 없으면 기존 방식대로 JSON으로 전송
+        print(jsonEncode(profileData));
         final response = await http.patch(
           url,
           headers: {

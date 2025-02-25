@@ -3,7 +3,6 @@ import 'fitting_result_model.dart'; // VirtualTryOnImage 모델 파일의 경로
 
 class FittingResultProvider extends ChangeNotifier {
   List<VirtualTryOnImage> _fittingImages = [];
-
   List<VirtualTryOnImage> get fittingImages => _fittingImages;
 
   void clearFittingImages() {

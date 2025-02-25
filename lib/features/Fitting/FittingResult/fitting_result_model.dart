@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:wheelwear_frontend/features/Closet/models/closet_item.dart';
+import 'package:flutter/foundation.dart';
 
 /// BodyImage 모델: 응답 데이터의 body_image 객체를 파싱합니다.
 class BodyImage {
@@ -62,7 +63,7 @@ class BodyImage {
   }
 }
 
-/// VirtualTryOnImage 모델 수정
+/// VirtualTryOnImage 모델 수정 - AI 사이즈 추천 변수 추가 (널 허용)
 class VirtualTryOnImage {
   final String image;
   final String title;
@@ -73,6 +74,7 @@ class VirtualTryOnImage {
   final ClosetItem? dressCloth;
   final bool isFavorite;
   final bool saved;
+
 
   VirtualTryOnImage({
     required this.image,
@@ -123,4 +125,17 @@ class VirtualTryOnImage {
       'saved': saved,
     };
   }
+}
+
+/// 추천 사이즈 정보를 관리할 모델 (여기서는 image 필드를 id로 사용합니다)
+class FittingImageLLM {
+  final String id;
+  final String? recommendedSize;
+  final String? recommendedSizeDescription;
+
+  FittingImageLLM({
+    required this.id,
+    this.recommendedSize,
+    this.recommendedSizeDescription,
+  });
 }
