@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import '../../add_cloth_screen.dart'; // 새로운 페이지 import
 
 class AddClothButton extends StatelessWidget {
   const AddClothButton({Key? key}) : super(key: key);
 
   void _onTap(BuildContext context) {
-    // 옷 추가 버튼 onTap 로직 (예시: 스낵바 노출)
-    debugPrint('Add Cloth Button Tapped');
+    // 옷 추가 버튼 onTap 시 AddClothPage로 이동
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AddClothScreen()),
+    );
   }
 
   @override

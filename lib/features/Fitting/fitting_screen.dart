@@ -47,6 +47,7 @@ class _FittingScreenState extends State<FittingScreen> {
       onWillPop: _onWillPop,
       child: CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
+          automaticallyImplyLeading: false, // 뒤로가기 버튼 제거
           middle: Text("피팅룸", style: TextStyle(fontWeight: FontWeight.w600)),
         ),
         child: Stack(
@@ -66,7 +67,6 @@ class _FittingScreenState extends State<FittingScreen> {
                 ],
               ),
             ),
-
             if (_isLoading)
               Positioned.fill(
                 child: Container(
@@ -85,4 +85,5 @@ class _FittingScreenState extends State<FittingScreen> {
       ),
     );
   }
+
 }

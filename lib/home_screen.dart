@@ -22,6 +22,7 @@ import 'features/Fitting/fitting_closet/providers/clothing_confirmation_provider
 
 import 'utils/bodyImageManager/body_service.dart';
 import 'features/Fitting/fitting_service.dart';
+import 'features/MyPage/profile_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -85,7 +86,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                     child: FittingScreen(),
                   ),
-                  MyPageScreen(),
+                  MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider<ProfileProvider>(
+                        create: (_) => ProfileProvider(),
+                      ),
+                    ],
+                    child: MyPageScreen(),
+                  ),
                 ],
               ),
             ),

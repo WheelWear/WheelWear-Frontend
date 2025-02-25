@@ -14,6 +14,7 @@ class ClosetHeaderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
+        automaticallyImplyLeading: false, // 뒤로가기 버튼 제거
         middle: Text(
           "내 옷장",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -46,9 +47,7 @@ class ClosetHeaderScreen extends StatelessWidget {
               ),
               Divider(
                 color: Colors.grey.shade300,
-                thickness: 1, // 두께
-                // indent: 16,  // 왼쪽 여백
-                // endIndent: 16,  // 오른쪽 여백
+                thickness: 1,
               ),
               SizedBox(height: 10),
               // ClosetItemScreen은 Expanded로 감싸서 부모의 남은 공간을 채우도록 함

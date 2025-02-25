@@ -57,7 +57,7 @@ class _FittingMainContentState extends State<FittingMainContent> {
                         : Image.asset(
                       "assets/closet/emptyCloset.png",
                       width: MediaQuery.of(context).size.width,
-                      height: 500,
+                      height: 420,
                       fit: BoxFit.contain,
                     ),
                   ),

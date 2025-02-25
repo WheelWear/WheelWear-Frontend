@@ -23,7 +23,7 @@ class FittingResultButtons extends StatelessWidget {
           Expanded(
             child: Align(
               alignment: Alignment.centerRight,
-              child: _buildTextButton(CupertinoIcons.arrow_right_arrow_left, "상의 매칭하기", () {
+              child: _buildTextButton(CupertinoIcons.arrow_right_arrow_left, "추가 피팅하기", () {
                 print("✅ 상의 매칭 기능");
               }),
             ),
