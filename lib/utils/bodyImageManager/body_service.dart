@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../../utils/token_storage.dart';
+import '../token_storage.dart';
 
 class MyPageService {
   final Dio dio;
@@ -29,7 +29,7 @@ class MyPageService {
 
       final String url = '$baseUrl/api/body-images/';
 
-      final response = await dio.post(
+      final response = await dio.patch(
         url,
         data: formData,
         options: Options(
@@ -44,11 +44,9 @@ class MyPageService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
         final imageUrl = data['body_image'] as String?;
-        final imageId = data['id'] as int?;
-
-        if (imageUrl != null && imageId != null) {
-          print("🟢 이미지 업로드 성공! ID: $imageId, URL: $imageUrl");
-          return {"id": imageId, "body_image": imageUrl}; // ✅ ID와 URL 반환
+        if (imageUrl != null) {
+          print("🟢 이미지 업로드 성공! URL: $imageUrl");
+          return {"body_image": imageUrl}; // ✅ ID와 URL 반환
         } else {
           print("🔴 업로드 성공했지만 필요한 데이터 없음.");
           return null;
@@ -63,4 +61,3 @@ class MyPageService {
     }
   }
 }
-

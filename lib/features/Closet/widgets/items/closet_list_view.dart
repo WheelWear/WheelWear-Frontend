@@ -28,7 +28,7 @@ class ClosetListView extends StatelessWidget {
 
     final filteredItems = _filterItems(context, items);
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
       child: Stack(
         children: [
           // 아이템이 하나도 없을 때, 배경에 emptyCloset 이미지 표시 (크기 조정 및 패딩 적용)
@@ -61,8 +61,8 @@ class ClosetListView extends StatelessWidget {
           ),
           if (isSelectionMode)
             Positioned(
-              bottom: 16,
-              right: 16,
+              bottom: 1,
+              right: 1,
               child: SelectModeButton(),
             ),
         ],

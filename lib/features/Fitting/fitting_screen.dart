@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import ' widgets/fitting_closet_content.dart';
-import ' widgets/fitting_main_content.dart';
+import 'widgets/fitting_closet_content.dart';
+import 'widgets/fitting_main_content.dart';
 import 'FittingResult/fitting_result_screen.dart';
 
 class FittingScreen extends StatefulWidget {

@@ -5,8 +5,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:wheelwear_frontend/utils/token_storage.dart';
-import '../features/MyPage/mypage_service.dart';
-import 'package:wheelwear_frontend/utils/image_picker_util.dart';
+import 'body_service.dart';
+import './ImagePicker/image_picker_util.dart';
 
 class BodyImageProvider extends ChangeNotifier {
   final MyPageService _myPageService;
@@ -14,12 +14,10 @@ class BodyImageProvider extends ChangeNotifier {
   BodyImageProvider(this._myPageService);
 
   String? _bodyImageUrl;
-  int? _bodyImageID;
   bool _isFetching = false;
   bool _isUploading = false;
 
   String? get bodyImageUrl => _bodyImageUrl;
-  int? get bodyImageID => _bodyImageID;
   bool get isFetching => _isFetching;
   bool get isUploading => _isUploading;
 
@@ -51,16 +49,13 @@ class BodyImageProvider extends ChangeNotifier {
 
         if (bodyImages.isNotEmpty) {
           final newImageUrl = bodyImages[0]['body_image'];
-          final newImageID = bodyImages[0]['id'];
 
-          if (_bodyImageUrl != newImageUrl || _bodyImageID != newImageID) {
+          if (_bodyImageUrl != newImageUrl) {
             _bodyImageUrl = newImageUrl;
-            _bodyImageID = newImageID;
             notifyListeners();
           }
         } else {
           _bodyImageUrl = null;
-          _bodyImageID = null;
           notifyListeners();
         }
       }
@@ -87,8 +82,7 @@ class BodyImageProvider extends ChangeNotifier {
       final result = await _myPageService.uploadMyPageBodyImage(pickedFile);
       if (result != null) {
         _bodyImageUrl = result['body_image'];
-        _bodyImageID = result['id'];
-        print("🟢 바디 이미지 업로드 성공: ID=$_bodyImageID, URL=$_bodyImageUrl");
+        print("🟢 바디 이미지 업로드 성공: URL=$_bodyImageUrl");
         notifyListeners();
       }
     } catch (e) {

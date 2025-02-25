@@ -8,7 +8,8 @@ class FittingService {
   final String? baseUrl = dotenv.env['BACKEND_URL'];
 
   /// 🟢 가상 피팅 이미지 생성 요청 (한 번에 하나씩 요청)
-  Future<String?> generateFittingImage(BuildContext context, Map<String, dynamic> requestData) async {
+  /// 성공 시 전체 JSON 데이터를 반환합니다.
+  Future<Map<String, dynamic>?> generateFittingImage(BuildContext context, Map<String, dynamic> requestData) async {
     if (baseUrl == null) {
       print("🔴 BASE_URL이 설정되지 않았습니다.");
       return null;
@@ -22,11 +23,13 @@ class FittingService {
 
     final url = Uri.parse('$baseUrl/api/virtual-tryon-images/');
 
-    // ✅ 최소한 하나의 옷이 선택되지 않으면 요청 차단
-    if (!requestData.containsKey('top_cloth') &&
-        !requestData.containsKey('bottom_cloth') &&
-        !requestData.containsKey('dress_cloth')) {
-      print("🔴 최소한 하나의 옷을 선택해야 합니다.");
+    int count = 0;
+    if (requestData.containsKey('top_cloth')) count++;
+    if (requestData.containsKey('bottom_cloth')) count++;
+    if (requestData.containsKey('dress_cloth')) count++;
+
+    if (count != 1) {
+      print("🔴 옷은 무조건 하나만 선택해야 합니다.");
       return null;
     }
 
@@ -43,10 +46,10 @@ class FittingService {
         body: jsonData,
       );
 
-      if (response.statusCode == 201) {
-        final data = jsonDecode(response.body);
-        print("🟢 피팅 이미지 생성 성공: ${data["generated_image"]}");
-        return data["generated_image"]; // ✅ 성공하면 URL 반환
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        print("🟢 피팅 이미지 생성 성공");
+        return data; // 전체 JSON 객체 반환
       } else {
         print("🔴 피팅 이미지 생성 실패: ${response.statusCode}");
         print("🔴 응답 본문: ${response.body}");

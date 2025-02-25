@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'profile_edit_screen.dart';
-import '../../utils/body_image_provider.dart';
+import '../../utils/bodyImageManager/body_image_provider.dart';
+import 'package:wheelwear_frontend/utils/retryable_cached_network_image.dart';
 
 class MyPageScreen extends StatefulWidget {
   @override
@@ -259,7 +261,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                 );
               },
               child: Container(
-                width: 361,
+                width: 344,
                 height: 33,
                 decoration: ShapeDecoration(
                   color: Color(0xFF3617CE),
@@ -279,19 +281,18 @@ class _MyPageScreenState extends State<MyPageScreen> {
                   ),
                 ),
               ),
+
             ),
           ),
         ],
       ),
     );
   }
-
-// 🔹 사진 추가/변경 섹션 (Provider 사용)
   Widget _buildPhotoSection() {
-    return Consumer<BodyImageProvider?>(
+    return Consumer<BodyImageProvider>(
       builder: (context, bodyImageProvider, child) {
-        final imageUrl = bodyImageProvider?.bodyImageUrl;
-        final isUploading = bodyImageProvider?.isUploading ?? false;
+        final imageUrl = bodyImageProvider.bodyImageUrl;
+        final isUploading = bodyImageProvider.isUploading;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -302,68 +303,79 @@ class _MyPageScreenState extends State<MyPageScreen> {
               child: Column(
                 children: [
                   if (imageUrl == null) ...[
-                    Text("내 사진 없음", style: TextStyle(
-                        fontSize: 14, color: CupertinoColors.systemGrey)),
+                    Text(
+                      "내 사진 없음",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: CupertinoColors.systemGrey,
+                      ),
+                    ),
                     SizedBox(height: 10),
                     CupertinoButton(
                       padding: EdgeInsets.zero,
                       child: Container(
                         width: 80,
                         height: 80,
-                        child: Icon(CupertinoIcons.add, size: 120,
-                            color: CupertinoColors.systemGrey),
+                        child: Icon(
+                          CupertinoIcons.add,
+                          size: 120,
+                          color: CupertinoColors.systemGrey,
+                        ),
                       ),
-                      onPressed: isUploading ? null : () async {
-                        if (bodyImageProvider != null) {
-                          await bodyImageProvider.fetchBodyImage();
-                        } else {
-                          print("🔴 BodyImageProvider가 null입니다.");
-                        }
+                      onPressed: isUploading
+                          ? null
+                          : () async {
+                        await bodyImageProvider.pickAndUploadBodyImage();
                       },
                     ),
-                  ] else
-                    ...[
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(imageUrl, width: 310,
-                            height: 410,
-                            fit: BoxFit.cover),
-                      ),
-                      SizedBox(height: 10),
-                      Container(
-                        width: 310,
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: isUploading ? null : () async {
-                            if (bodyImageProvider != null) {
-                              await bodyImageProvider.fetchBodyImage();
-                            } else {
-                              print("🔴 BodyImageProvider가 null입니다.");
-                            }
-                          },
-                          child: Container(
-                            width: 90,
-                            height: 28,
-                            decoration: ShapeDecoration(
-                              color: isUploading ? Color(0xFFA0A0A0) : Color(
-                                  0xFFC3C3C3),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(0)),
+                  ] else ...[
+                    // 캐시 및 재시도 기능이 있는 커스텀 이미지 위젯 사용
+                    SizedBox(
+                    width: 310,
+                    height: 410,
+                      child: RetryableCachedNetworkImage(
+                        imageUrl: imageUrl,
+                        fit: BoxFit.cover,
+                        borderRadius: 10,
+                      )
+                    ),
+                    SizedBox(height: 10),
+                    Container(
+                      width: 310,
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: isUploading
+                            ? null
+                            : () async {
+                          await bodyImageProvider.pickAndUploadBodyImage();
+                        },
+                        child: Container(
+                          width: 90,
+                          height: 28,
+                          decoration: ShapeDecoration(
+                            color: isUploading
+                                ? Color(0xFFA0A0A0)
+                                : Color(0xFFC3C3C3),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0),
                             ),
-                            child: Center(
-                              child: isUploading
-                                  ? CupertinoActivityIndicator()
-                                  : Text(
-                                "사진 변경",
-                                style: TextStyle(fontSize: 14,
-                                    color: CupertinoColors.white,
-                                    fontWeight: FontWeight.w500),
+                          ),
+                          child: Center(
+                            child: isUploading
+                                ? CupertinoActivityIndicator()
+                                : Text(
+                              "사진 변경",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: CupertinoColors.white,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ],
+                    ),
+                  ],
                 ],
               ),
             ),

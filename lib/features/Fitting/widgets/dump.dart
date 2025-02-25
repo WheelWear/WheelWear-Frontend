@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../utils/body_image_provider.dart';
+import '../../../utils/bodyImageManager/body_image_provider.dart';
 import '../fitting_closet/models/closet_item.dart';
 import '../FittingResult/fitting_result_provider.dart';
 import '../fitting_closet/providers/closet_items_provider.dart';
@@ -29,15 +29,10 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
     final fittingResultProvider = Provider.of<FittingResultProvider>(context, listen: false);
     final fittingService = FittingService();
 
-    if (bodyImageProvider.bodyImageID == null) {
-      print("🔴 바디 이미지가 설정되지 않았습니다!");
-      return;
-    }
-
     final chosenIds = clothingConfirmationProvider.confirmedClothes;
     final selectedItems = closetItemsProvider.items
         .where((item) => chosenIds.contains(item.id))
-        .take(4)
+        .take(3)
         .toList();
 
     if (selectedItems.isEmpty) {
@@ -45,17 +40,11 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
-
-    widget.setLoading(true); // 🔴 화면 전체 로딩 활성화
-
     for (var item in selectedItems) {
       final Map<String, dynamic> requestData = {
         "title": "생성된 옷",
         "is_favorite": false,
-        "body_image": bodyImageProvider.bodyImageID,
+        "saved" : false,
       };
 
       switch (item.clothType) {
@@ -156,7 +145,7 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
           Align(
             alignment: Alignment.centerRight,
             child: Padding(
-              padding: const EdgeInsets.only(top: 10, right: 10),
+              padding: const EdgeInsets.only(top: 10),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purple,
