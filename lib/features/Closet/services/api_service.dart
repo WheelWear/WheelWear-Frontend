@@ -1,10 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import '../models/closet_item.dart';
 import 'package:wheelwear_frontend/utils/token_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart'; // debugPrint 사용
+import 'package:http/http.dart' as http;
 
 class ApiService {
   final String backendUrl;
@@ -58,8 +60,6 @@ class ApiService {
         if (attempt >= maxRetries) {
           throw Exception('최대 재시도 횟수 초과: $error');
         }
-        // 재시도 전 잠시 대기 (예: 2초, 필요시 지수 백오프로 조정 가능)
-        // await Future.delayed(const Duration(seconds: 2));
         await Future.delayed(const Duration(milliseconds: 1));
       }
     }
@@ -68,7 +68,9 @@ class ApiService {
   // 주어진 clothId들을 삭제하는 함수 (재시도 없이 기존 로직)
   Future<void> deleteClothes(List<int> clothIds) async {
     try {
-      final deleteFutures = clothIds.map((id) => dio.delete('/api/clothes/$id/')).toList();
+      final deleteFutures = clothIds
+          .map((id) => dio.delete('/api/clothes/$id/'))
+          .toList();
       final responses = await Future.wait(deleteFutures);
 
       for (final response in responses) {
@@ -106,6 +108,70 @@ class ApiService {
     } catch (error) {
       debugPrint("updateClothesToDonation 에러: $error");
       throw Exception('Failed to update one or more clothes to donation');
+    }
+  }
+
+  // 옷 업로드 함수 추가 (uploadClothItems)
+  Future<ClosetItem> uploadClothItems(
+      File selectedImage,
+      String ClosetType,
+      String Size,
+      String Brand,
+      String ClosetCategory) async {
+    final String? accessToken = await TokenStorage.getAccessToken();
+    final Uri url = Uri.parse('$backendUrl/api/clothes/');
+
+    if (accessToken == null) {
+      throw Exception('Access token is null! Login required.');
+    }
+
+    // 디버깅: 값 출력
+    debugPrint("ClosetType: $ClosetType");
+    debugPrint("Size: $Size");
+    debugPrint("Brand: $Brand");
+    debugPrint("ClosetCategory: $ClosetCategory");
+
+    var request = http.MultipartRequest('POST', url);
+    request.headers['Authorization'] = 'Bearer $accessToken';
+
+    // Null 체크 및 기본값 설정
+    request.fields['cloth_type'] =
+    ClosetType.isNotEmpty ? ClosetType : 'Unknown';
+    request.fields['size'] = Size.isNotEmpty ? Size : 'Unknown';
+    request.fields['brand'] = Brand.isNotEmpty ? Brand : 'Unknown';
+    request.fields['cloth_subtypes_names'] = 'Jeans,SportswearBottom';
+    request.fields['closet_category'] =
+    ClosetCategory.isNotEmpty ? ClosetCategory : 'Unknown';
+
+    // 지원되는 이미지 형식 확인
+    List<String> allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+    String fileExtension =
+    selectedImage.path.split('.').last.toLowerCase();
+
+    if (!allowedExtensions.contains(fileExtension)) {
+      throw Exception('Unsupported file format: $fileExtension');
+    }
+
+    // 이미지 파일 추가 (필드명 확인)
+    request.files.add(await http.MultipartFile.fromPath(
+      'clothImage', // 서버에서 요구하는 필드명 확인 필수!
+      selectedImage.path,
+      filename: selectedImage.path.split('/').last,
+    ));
+
+    var response = await request.send();
+    final responseBody = await response.stream.bytesToString();
+
+    debugPrint("🚨 서버 응답 코드: ${response.statusCode}");
+    debugPrint("📩 서버 응답 내용: $responseBody");
+
+    if (response.statusCode == 201) {  // 201 Created 확인
+      final Map<String, dynamic> jsonResponse = json.decode(responseBody);
+      debugPrint("✅ 데이터 받기 성공: ${jsonResponse['id']}");
+
+      return ClosetItem.fromJson(jsonResponse);
+    } else {
+      throw Exception('Failed to upload closet item: ${response.statusCode} - $responseBody');
     }
   }
 }

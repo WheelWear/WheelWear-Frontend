@@ -44,7 +44,7 @@ class ClosetListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final filteredItems = _filterItems(context, items);
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0), // 하단 제외
       child: Stack(
         children: [
           // 아이템이 하나도 없을 때, emptyCloset 이미지를 중앙에 표시
@@ -82,8 +82,8 @@ class ClosetListView extends StatelessWidget {
             },
           ),
           Positioned(
-            bottom: 16,
-            right: 16,
+            bottom: 1,
+            right: 1,
             child: SelectModeButton(onExitClosetScreen: onExitClosetScreen),
           ),
         ],

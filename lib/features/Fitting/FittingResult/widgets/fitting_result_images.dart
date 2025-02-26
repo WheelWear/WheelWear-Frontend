@@ -1,74 +1,177 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../fitting_result_provider.dart';
+import '../fitting_result_model.dart'; // VirtualTryOnImage 모델 import (경로에 맞게 수정)
+import 'package:wheelwear_frontend/utils/retryable_cached_network_image.dart'; // 실제 경로에 맞게 수정
 
-class FittingResultImages extends StatelessWidget {
+/// 메인 이미지와 설명용 이미지를 토글하는 위젯
+class ToggleImageWidget extends StatefulWidget {
+  final String imageUrl;
+  final String explanationImageUrl;
+
+  const ToggleImageWidget({
+    Key? key,
+    required this.imageUrl,
+    required this.explanationImageUrl,
+  }) : super(key: key);
+
+  @override
+  _ToggleImageWidgetState createState() => _ToggleImageWidgetState();
+}
+
+class _ToggleImageWidgetState extends State<ToggleImageWidget> {
+  // false: 기본 이미지, true: 설명 이미지
+  bool _isToggled = false;
+
   @override
   Widget build(BuildContext context) {
-    final fittingResultProvider = Provider.of<FittingResultProvider>(context);
-    final fittingImages = fittingResultProvider.fittingImages;
+    // 토글 상태에 따라 메인 이미지와 오버레이 이미지 결정
+    final mainImageUrl = _isToggled ? widget.explanationImageUrl : widget.imageUrl;
+    final overlayImageUrl = _isToggled ? widget.imageUrl : widget.explanationImageUrl;
 
-    return Scaffold(
-      body: fittingImages.isEmpty
-          ? Center(child: Text("아직 생성된 피팅 이미지가 없습니다."))
-          : _FittingResultImageSlider(fittingImages: fittingImages),
+    return AspectRatio(
+      aspectRatio: 1, // 필요에 따라 비율 조정
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // 메인 큰 이미지
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: RetryableCachedNetworkImage(
+              imageUrl: mainImageUrl,
+              fit: BoxFit.cover,
+            ),
+          ),
+          // 오른쪽 하단 오버레이 작은 이미지
+          Positioned(
+            bottom: 10,
+            right: 10,
+            child: GestureDetector(
+            onTap: () {
+              setState(() {
+                _isToggled = !_isToggled;
+              });
+            },
+              child: Container(
+                width: 60,
+                // height: 50,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                child: RetryableCachedNetworkImage(
+                  imageUrl: overlayImageUrl,
+                  fit: BoxFit.contain,
+                  borderRadius: 0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
-class _FittingResultImageSlider extends StatefulWidget {
-  final List<String> fittingImages;
+/// 생성된 피팅 이미지를 PageView 슬라이더로 보여주는 위젯
+class FittingResultImages extends StatelessWidget {
+  const FittingResultImages({Key? key}) : super(key: key);
 
-  _FittingResultImageSlider({required this.fittingImages});
+  @override
+  Widget build(BuildContext context) {
+    final fittingResultProvider = Provider.of<FittingResultProvider>(context);
+    final fittingImages = fittingResultProvider.fittingImages;
+    debugPrint("fittingImages 개수: ${fittingImages.length}");
+
+    return Scaffold(
+      body: fittingImages.isEmpty
+          ? const Center(child: Text("아직 생성된 피팅 이미지가 없습니다."))
+          : _FittingResultImageSlider(
+        fittingImages: fittingImages,
+      ),
+    );
+  }
+}
+
+
+/// VirtualTryOnImage 객체 리스트를 받아 PageView로 슬라이더 형태로 보여주는 위젯
+class _FittingResultImageSlider extends StatefulWidget {
+  final List<VirtualTryOnImage> fittingImages;
+
+  const _FittingResultImageSlider({
+    Key? key,
+    required this.fittingImages,
+  }) : super(key: key);
 
   @override
   _FittingResultImageSliderState createState() => _FittingResultImageSliderState();
 }
 
 class _FittingResultImageSliderState extends State<_FittingResultImageSlider> {
-  int _currentIndex = 0;
   final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-
-    return Column(
+    return Stack(
       children: [
-        Container(
-          child: PageView.builder(
-            controller: _pageController,
-            itemCount: widget.fittingImages.length,
-            onPageChanged: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-            itemBuilder: (context, index) {
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  widget.fittingImages[index],
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                ),
-              );
-            },
-          ),
+        // PageView 영역 (슬라이더)
+        PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _currentPage = index;
+            });
+            final currentImage = widget.fittingImages[index];
+            final fittingResultProvider = Provider.of<FittingResultProvider>(context, listen: false);
+            fittingResultProvider.updateSelectedImage(currentImage);
+
+            // 객체 전체를 디버그 출력 (toString()이 오버라이드 되어 있다면 객체의 모든 내용이 출력됩니다)
+            debugPrint("Selected image object details: ${fittingResultProvider.selectedImage?.image}");
+          },
+          children: widget.fittingImages.map((imageModel) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ToggleImageWidget(
+                imageUrl: imageModel.image,
+                explanationImageUrl: imageModel.dressCloth?.clothImage ??
+                    imageModel.topCloth?.clothImage ??
+                    imageModel.bottomCloth?.clothImage ??
+                    '',
+              ),
+            );
+          }).toList(),
         ),
-        SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            widget.fittingImages.length,
-                (index) => AnimatedContainer(
-              duration: Duration(milliseconds: 300),
-              width: _currentIndex == index ? 10 : 6,
-              height: 6,
-              margin: EdgeInsets.symmetric(horizontal: 4),
+        // 인디케이터 영역 (동그라미와 불투명한 타원형 배경)
+        Positioned(
+          bottom: 16,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _currentIndex == index ? Colors.blue : Colors.grey,
+                color: Colors.black.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(widget.fittingImages.length, (index) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                    width: _currentPage == index ? 8.0 : 8.0,
+                    height: _currentPage == index ? 8.0 : 8.0,
+                    decoration: BoxDecoration(
+                      color: _currentPage == index ? Colors.white : Colors.grey[500],
+                      shape: BoxShape.circle,
+                    ),
+                  );
+                }),
               ),
             ),
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:wheelwear_frontend/utils/body_image_provider.dart';
+import 'package:wheelwear_frontend/utils/bodyImageManager/body_image_provider.dart';
 import 'features/Fitting/FittingResult/fitting_result_provider.dart';
 import 'features/Fitting/fitting_closet/providers/fitting_creation_provider.dart' as fitting;
 import 'features/Fitting/fitting_screen.dart';
@@ -20,8 +20,9 @@ import 'features/Fitting/fitting_closet/providers/closet_filter_provider.dart' a
 import 'features/Fitting/fitting_closet/providers/closet_items_provider.dart' as fitting;
 import 'features/Fitting/fitting_closet/providers/clothing_confirmation_provider.dart' as fitting;
 
-import 'features/MyPage/mypage_service.dart';
+import 'utils/bodyImageManager/body_service.dart';
 import 'features/Fitting/fitting_service.dart';
+import 'features/MyPage/profile_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -85,7 +86,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                     child: FittingScreen(),
                   ),
-                  MyPageScreen(),
+                  MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider<ProfileProvider>(
+                        create: (_) => ProfileProvider(),
+                      ),
+                    ],
+                    child: MyPageScreen(),
+                  ),
                 ],
               ),
             ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
-import '../retryable_cached_network_image.dart';
+import 'package:wheelwear_frontend/utils/retryable_cached_network_image.dart';
 import '../../models/closet_item.dart';
 import '../../providers/selection_provider.dart';
 

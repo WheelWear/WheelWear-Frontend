@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+// ClosetItem 모델 수정 (toJson 메서드 추가)
 enum ClosetCategory {
   myClothes,  // 내옷
   wishlist,   // 위시리스트
@@ -15,7 +18,7 @@ class ClosetItem {
   final ClosetCategory closetCategory; // 내옷, 위시리스트, 기부함 구분
   final ClothType clothType;           // 상의, 하의, 원피스 구분
   final String clothImage;             // URL 형식 이미지
-  final String? size;           // URL 형식 이미지
+  final String? size;
   final String? brand;
   final bool isFavorite;
   final List<String> clothSubtypes;    // 상세 유형(예: 후드티, 니트 등)
@@ -32,7 +35,6 @@ class ClosetItem {
   });
 
   factory ClosetItem.fromJson(Map<String, dynamic> json) {
-    // JSON 데이터의 문자열 값을 enum으로 변환하는 로직 추가
     ClosetCategory category;
     switch (json['closet_category'] as String) {
       case 'myClothes':
@@ -45,7 +47,7 @@ class ClosetItem {
         category = ClosetCategory.donation;
         break;
       default:
-        category = ClosetCategory.myClothes; // 기본값 처리
+        category = ClosetCategory.myClothes;
     }
 
     ClothType type;
@@ -60,7 +62,7 @@ class ClosetItem {
         type = ClothType.Dress;
         break;
       default:
-        type = ClothType.Top; // 기본값 처리
+        type = ClothType.Top;
     }
 
     return ClosetItem(
@@ -76,5 +78,18 @@ class ClosetItem {
           .toList() ??
           [],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'closet_category': closetCategory.toString().split('.').last,
+      'cloth_type': clothType.toString().split('.').last,
+      'clothImage': clothImage,
+      'brand': brand,
+      'size': size,
+      'isFavorite': isFavorite,
+      'cloth_subtypes': clothSubtypes,
+    };
   }
 }

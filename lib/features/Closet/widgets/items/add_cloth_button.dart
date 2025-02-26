@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../add_cloth_screen.dart'; // 새로운 페이지 import
+import '../../providers/closet_items_provider.dart';
 
 class AddClothButton extends StatelessWidget {
   const AddClothButton({Key? key}) : super(key: key);
 
   void _onTap(BuildContext context) {
-    // 옷 추가 버튼 onTap 로직 (예시: 스낵바 노출)
-    debugPrint('Add Cloth Button Tapped');
+    // Provider 인스턴스를 상위에서 가져와서 AddClothScreen에 전달합니다.
+    final closetItemsProvider = Provider.of<ClosetItemsProvider>(context, listen: false);
+    // 옷 추가 버튼 onTap 시 AddClothPage로 이동
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddClothScreen(closetItemsProvider: closetItemsProvider)),
+    );
   }
 
   @override

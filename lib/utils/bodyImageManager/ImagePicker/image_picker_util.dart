@@ -6,8 +6,8 @@ class ImagePickerUtil {
 
   static Future<File?> pickImage({required ImageSource source}) async {
     try {
-      final XFile? image = await _picker.pickImage(source: source);
-      return image != null ? File(image.path) : null;
+      final XFile? pickedFile = await _picker.pickImage(source: source);
+      return pickedFile != null ? File(pickedFile.path) : null;
     } catch (e) {
       print("이미지 선택 오류: $e");
       return null;
