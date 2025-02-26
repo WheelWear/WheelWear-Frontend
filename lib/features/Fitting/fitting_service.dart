@@ -103,6 +103,7 @@ class FittingService {
           response.statusCode! >= 200 &&
           response.statusCode! < 300) {
         debugPrint("🟢 추천 사이즈 조회 성공");
+        debugPrint("🟢 응답 본문: ${response.data}");
         return response.data as Map<String, dynamic>;
       } else {
         debugPrint("🔴 추천 사이즈 조회 실패: ${response.statusCode}");

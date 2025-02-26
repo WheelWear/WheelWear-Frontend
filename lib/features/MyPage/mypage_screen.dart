@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../History/virtual_tryon_provider.dart';
 import 'profile_section.dart';
 import 'alarm_screen.dart';
 import '../../utils/bodyImageManager/body_image_provider.dart';
 import 'package:wheelwear_frontend/utils/retryable_cached_network_image.dart';
 import 'profile_provider.dart';
+import '../History/screens/virtual_tryon_screen.dart';
 
 class MyPageScreen extends StatefulWidget {
   @override
@@ -21,6 +23,21 @@ class _MyPageScreenState extends State<MyPageScreen> {
       Provider.of<ProfileProvider>(context, listen: false).loadProfile(context);
     });
   }
+
+  // FAB 클릭 시 기록 화면으로 이동
+  void _openFittingHistory() {
+    print("1");
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider(
+          create: (context) => VirtualTryOnProvider(), // 여기서만 Provider 생성
+          child: VirtualTryOnScreen(),
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,18 +62,41 @@ class _MyPageScreenState extends State<MyPageScreen> {
         ),
       ),
       child: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 10),
-              // 프로필 영역
-              ProfileSection(),
-              SizedBox(height: 10),
-              _buildPhotoSection(),
-            ],
-          ),
+        child: Stack(
+          children: [
+            // SingleChildScrollView를 사용해 콘텐츠가 길어질 때 스크롤 가능하도록 함
+            SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 10),
+                  ProfileSection(),
+                  SizedBox(height: 10),
+                  _buildPhotoSection(),
+                  SizedBox(height: 100),
+                ],
+              ),
+            ),
+            // FloatingActionButton 개선된 디자인 (Extended)
+            Positioned(
+              bottom: 20,
+              left: 20,
+              child: FloatingActionButton.extended(
+                onPressed: _openFittingHistory,
+                backgroundColor: Colors.deepOrangeAccent,
+                icon: Icon(Icons.history, color: Colors.white),
+                label: Text(
+                  "히스토리",
+                  style: TextStyle(color: Colors.white),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 6,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -126,11 +166,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
                           width: 90,
                           height: 28,
                           decoration: ShapeDecoration(
-                            color: isUploading
-                                ? Color(0xFFA0A0A0)
-                                : Color(0xFFC3C3C3),
+                            color: isUploading ? Color(0xFFA0A0A0) : Color(0xFFC3C3C3),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(0),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                           ),
                           child: Center(

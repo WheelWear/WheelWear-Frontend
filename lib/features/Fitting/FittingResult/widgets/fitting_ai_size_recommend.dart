@@ -39,7 +39,7 @@ class FittingAISizeRecommend extends StatelessWidget {
               barrierDismissible: false,
               builder: (context) => const AISizeRecommendModal(
                 recommendedSize: "",
-                recommendedSizeDescription: "분석 진행 중...",
+                additionalExplanation: "분석 진행 중...",
                 errorFlag: false,
                 isLoading: true,
               ),
@@ -60,7 +60,7 @@ class FittingAISizeRecommend extends StatelessWidget {
                 context: context,
                 builder: (context) => AISizeRecommendModal(
                   recommendedSize: sizeRecommendation.recommendSize ?? "",
-                  recommendedSizeDescription: sizeRecommendation.additionalExplanation ?? "",
+                  additionalExplanation: sizeRecommendation.additionalExplanation ?? "",
                   references: sizeRecommendation.references?.cast<String>(),
                   referenceNum: sizeRecommendation.referenceNum,
                   errorFlag: false,
@@ -73,7 +73,7 @@ class FittingAISizeRecommend extends StatelessWidget {
                 context: context,
                 builder: (context) => const AISizeRecommendModal(
                   recommendedSize: "",
-                  recommendedSizeDescription: "추천 사이즈를 불러오는데 실패했습니다.",
+                  additionalExplanation: "추천 사이즈를 불러오는데 실패했습니다.",
                   errorFlag: true,
                   isLoading: false,
                 ),
