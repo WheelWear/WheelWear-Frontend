@@ -4,9 +4,9 @@ import 'package:camera/camera.dart'; // 📌 (추가) 카메라 패키지 불러
 import 'dart:io'; // 📌 (추가) 파일 처리를 위한 dart:io 추가
 import './services/api_service.dart';
 
-void UploadClothSubmit(File selectedImage, String ClosetType, String Size, String Brand, String ClosetCategory){
-  ApiService upload_service = ApiService();
-  upload_service.uploadClothItems(selectedImage, ClosetType, Size, Brand, ClosetCategory)ploadClothItems(selectedImage, ClosetType, Size, Brand, ClosetCategory);
+void uploadClothSubmit(File selectedImage, String closetType, String size, String brand, String closetCategory){
+  ApiService uploadService = ApiService();
+  uploadService.uploadClothItems(selectedImage, closetType, size, brand, closetCategory);
 }
 
 class ClothScreen extends StatefulWidget { // 🔄 (수정) StatelessWidget → StatefulWidget으로 변경 (이미지 업데이트 필요)
@@ -181,12 +181,11 @@ class _ClothScreenState extends State<ClothScreen> {
                   isFullWidth: true,
                   isBlackButton: true,
                   onTap: () {
-                    print("선택된 옷 타입: $_closetype");
+                    print("선택된 옷 타입: $_selectedType");
                     print("사이즈: ${_size.text}");
                     print("브랜드: ${_brand.text}");
                     print("선택된 카테고리: $_selectedCategory");
-                    UploadClothSubmit(_selectedImage, _closetype, _size.text, _brand.text, _selectedCategory)
-
+                    uploadClothSubmit(_selectedImage, _selectedType, _size.text, _brand.text, _selectedCategory);
                   },
                 ),
                 SizedBox(height: 10),
