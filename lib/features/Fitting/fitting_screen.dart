@@ -1,8 +1,10 @@
+// FittingScreen.dart (수정된 부분)
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'widgets/fitting_closet_content.dart';
 import 'widgets/fitting_main_content.dart';
 import 'FittingResult/fitting_result_screen.dart';
+import '../History/screens/virtual_tryon_screen.dart'; // 기록 화면 import
 
 class FittingScreen extends StatefulWidget {
   @override
@@ -41,14 +43,15 @@ class _FittingScreenState extends State<FittingScreen> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-          automaticallyImplyLeading: false, // 뒤로가기 버튼 제거
-          middle: Text("피팅룸", style: TextStyle(fontWeight: FontWeight.w600)),
+          automaticallyImplyLeading: false,
+          middle: const Text("피팅룸", style: TextStyle(fontWeight: FontWeight.w600)),
         ),
         child: Stack(
           children: [
@@ -57,8 +60,7 @@ class _FittingScreenState extends State<FittingScreen> {
                 children: [
                   Expanded(
                     child: _showClosetScreen
-                        ? FittingClosetContent(
-                        onExitClosetScreen: _exitClosetScreen)
+                        ? FittingClosetContent(onExitClosetScreen: _exitClosetScreen)
                         : FittingMainContent(
                       onToggleCloset: _toggleContent,
                       setLoading: _setLoading,
@@ -85,5 +87,4 @@ class _FittingScreenState extends State<FittingScreen> {
       ),
     );
   }
-
 }

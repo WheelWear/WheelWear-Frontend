@@ -93,4 +93,27 @@ class FittingService {
       throw Exception("Error updating saved status for vton with id $id: $e");
     }
   }
+
+  Future<Map<String, dynamic>?> fetchRecommendedSize(int clothID) async {
+    try {
+      debugPrint("🟡 추천 사이즈 조회 요청 (clothID: $clothID)");
+      final response = await dio.post('/api/clothes/$clothID/size/');
+
+      if (response.statusCode != null &&
+          response.statusCode! >= 200 &&
+          response.statusCode! < 300) {
+        debugPrint("🟢 추천 사이즈 조회 성공");
+        debugPrint("🟢 응답 본문: ${response.data}");
+        return response.data as Map<String, dynamic>;
+      } else {
+        debugPrint("🔴 추천 사이즈 조회 실패: ${response.statusCode}");
+        debugPrint("🔴 응답 본문: ${response.data}");
+        return null;
+      }
+    } catch (e) {
+      debugPrint("🔴 추천 사이즈 요청 중 오류 발생: $e");
+      return null;
+    }
+  }
+
 }

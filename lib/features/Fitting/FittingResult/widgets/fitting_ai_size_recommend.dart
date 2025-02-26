@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'ai_size_recommend_modal.dart'; // 모달창이 정의된 파일
 import 'package:provider/provider.dart';
 import '../fitting_result_provider.dart';
+import '../fitting_result_model.dart';
+import '../../fitting_service.dart';
 
 class FittingAISizeRecommend extends StatelessWidget {
   @override
@@ -11,22 +13,72 @@ class FittingAISizeRecommend extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.only(right: 20),
         child: ElevatedButton.icon(
-          onPressed: () {
+          onPressed: () async {
             final fittingResultProvider = Provider.of<FittingResultProvider>(context, listen: false);
 
-            // 객체 전체를 디버그 출력 (toString()이 오버라이드 되어 있다면 객체의 모든 내용이 출력됩니다)
-            debugPrint("Selected image object details: ${fittingResultProvider.selectedImage?.image}");
+            // dressCloth, topCloth, bottomCloth 중 존재하는 clothID 선택
+            int? clothID;
+            if (fittingResultProvider.selectedImage?.dressCloth != null) {
+              clothID = fittingResultProvider.selectedImage?.dressCloth?.id;
+            } else if (fittingResultProvider.selectedImage?.topCloth != null) {
+              clothID = fittingResultProvider.selectedImage?.topCloth?.id;
+            } else if (fittingResultProvider.selectedImage?.bottomCloth != null) {
+              clothID = fittingResultProvider.selectedImage?.bottomCloth?.id;
+            }
 
-            // 버튼 누르면 모달창을 띄웁니다.
+            if (clothID == null) {
+              debugPrint("Selected image is null");
+              return;
+            }
+
+            debugPrint("Selected image clothID: $clothID");
+
+            // 로딩 모달 표시 (취소 불가능)
             showDialog(
               context: context,
+              barrierDismissible: false,
               builder: (context) => const AISizeRecommendModal(
-                recommendedSize: "M",
-                recommendedSizeDescription: "M 사이즈를 추천드립니다.",
+                recommendedSize: "",
+                additionalExplanation: "분석 진행 중...",
                 errorFlag: false,
-                isLoading: false,
+                isLoading: true,
               ),
             );
+
+            // API 호출 (clothID를 기반으로 추천 사이즈 조회)
+            final responseData = await FittingService().fetchRecommendedSize(clothID);
+
+            // 로딩 모달 닫기
+            Navigator.of(context).pop();
+
+            if (responseData != null) {
+              // JSON 데이터를 모델로 파싱 (SizeRecommendation 모델 필요)
+              final sizeRecommendation = SizeRecommendation.fromJson(responseData);
+
+              // 추천 결과 모달 표시
+              showDialog(
+                context: context,
+                builder: (context) => AISizeRecommendModal(
+                  recommendedSize: sizeRecommendation.recommendSize ?? "",
+                  additionalExplanation: sizeRecommendation.additionalExplanation ?? "",
+                  references: sizeRecommendation.references?.cast<String>(),
+                  referenceNum: sizeRecommendation.referenceNum,
+                  errorFlag: false,
+                  isLoading: false,
+                ),
+              );
+            } else {
+              // API 호출 실패 시 에러 모달 표시
+              showDialog(
+                context: context,
+                builder: (context) => const AISizeRecommendModal(
+                  recommendedSize: "",
+                  additionalExplanation: "추천 사이즈를 불러오는데 실패했습니다.",
+                  errorFlag: true,
+                  isLoading: false,
+                ),
+              );
+            }
           },
           icon: Icon(Icons.auto_awesome, color: Colors.orange),
           label: Text("AI 사이즈 추천 보기", style: TextStyle(color: Colors.grey)),

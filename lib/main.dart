@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'features/Auth/login_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+import 'features/History/virtual_tryon_provider.dart';
 
 Future<void> main() async {
   // 애플리케이션 시작 전에 dotenv 초기화

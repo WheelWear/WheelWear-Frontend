@@ -133,37 +133,35 @@ class VirtualTryOnImage {
 
 
 class SizeRecommendation {
-  final String recommendSize;
-  final String additionalExplanation;
-  final List<dynamic> references;
-  final int referenceNum;
-  bool isLoading; // 로딩 상태 추가
+  String? recommendSize;
+  String? additionalExplanation;
+  List<dynamic>? references;
+  int? referenceNum;
 
   SizeRecommendation({
-    required this.recommendSize,
-    required this.additionalExplanation,
-    required this.references,
-    required this.referenceNum,
-    this.isLoading = false,
+    this.recommendSize = '',
+    this.additionalExplanation = '',
+    this.references = const [],
+    this.referenceNum = 0,
   });
 
   factory SizeRecommendation.fromJson(Map<String, dynamic> json) {
     return SizeRecommendation(
-      recommendSize: json['recommend_size'] as String,
-      additionalExplanation: json['additional_explanation'] as String,
-      references: json['references'] as List<dynamic>,
-      referenceNum: json['reference_num'] as int,
-      // isLoading은 JSON에 없으므로 기본값 사용
+      recommendSize: json['recommend_size'] as String? ?? '',
+      additionalExplanation: json['additional_explanation'] as String? ?? '',
+      references: json['references'] as List<dynamic>? ?? [],
+      referenceNum: json['reference_num'] as int? ?? 0,
+      // clothID와 isLoading은 JSON에 포함되지 않으므로 기본값 또는 null 사용
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'recommend_size': recommendSize,
-      'additional_explanation': additionalExplanation,
-      'references': references,
-      'reference_num': referenceNum,
-      // isLoading은 내부 상태 관리용으로 JSON에 포함하지 않을 수 있음.
+      'recommend_size': recommendSize ?? '',
+      'additional_explanation': additionalExplanation ?? '',
+      'references': references ?? [],
+      'reference_num': referenceNum ?? 0,
+      // clothID와 isLoading은 내부 상태 관리용이므로 JSON에 포함하지 않음
     };
   }
 }
