@@ -90,7 +90,7 @@ class _FittingMainContentState extends State<FittingMainContent> {
                         final bodyImageProvider = Provider.of<BodyImageProvider>(
                             context,
                             listen: false);
-                        await bodyImageProvider.pickAndUploadBodyImage();
+                        await bodyImageProvider.pickAndUploadBodyImage(context);
                       },
                       child: Container(
                         width: 90,

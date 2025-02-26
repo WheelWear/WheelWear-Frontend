@@ -99,7 +99,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                       onPressed: isUploading
                           ? null
                           : () async {
-                        await bodyImageProvider.pickAndUploadBodyImage();
+                        await bodyImageProvider.pickAndUploadBodyImage(context);
                       },
                     ),
                   ] else ...[
@@ -120,7 +120,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                         onTap: isUploading
                             ? null
                             : () async {
-                          await bodyImageProvider.pickAndUploadBodyImage();
+                          await bodyImageProvider.pickAndUploadBodyImage(context);
                         },
                         child: Container(
                           width: 90,

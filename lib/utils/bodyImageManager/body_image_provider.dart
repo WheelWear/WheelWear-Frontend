@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 import 'package:wheelwear_frontend/utils/token_storage.dart';
 import 'body_service.dart';
-import './ImagePicker/image_picker_util.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:wheelwear_frontend/utils/CameraScreenWithOverlay.dart'; // CameraScreenWithOverlay가 있는 모듈 import
 
 class BodyImageProvider extends ChangeNotifier {
   final MyPageService _myPageService;
@@ -68,10 +69,60 @@ class BodyImageProvider extends ChangeNotifier {
   }
 
   /// 🟢 바디 이미지 업로드 및 ID 저장
-  Future<void> pickAndUploadBodyImage() async {
+  /// 카메라와 앨범 선택 옵션을 제공하여 이미지를 가져온 후 업로드합니다.
+  Future<void> pickAndUploadBodyImage(BuildContext context) async {
     try {
-      File? pickedFile = await ImagePickerUtil.pickImage(source: ImageSource.gallery);
-      if (pickedFile == null) {
+      // 바텀시트를 통해 카메라/앨범 선택
+      final choice = await showModalBottomSheet<String>(
+        context: context,
+        builder: (BuildContext context) {
+          return SafeArea(
+            child: Wrap(
+              children: [
+                ListTile(
+                  leading: Icon(Icons.camera_alt),
+                  title: Text("카메라"),
+                  onTap: () => Navigator.pop(context, "camera"),
+                ),
+                ListTile(
+                  leading: Icon(Icons.photo),
+                  title: Text("앨범"),
+                  onTap: () => Navigator.pop(context, "gallery"),
+                ),
+                ListTile(
+                  leading: Icon(Icons.cancel),
+                  title: Text("취소"),
+                  onTap: () => Navigator.pop(context, null),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
+      if (choice == null) {
+        print("🔴 이미지 선택 취소됨");
+        return;
+      }
+
+      String? imagePath;
+      if (choice == "camera") {
+        // 커스텀 카메라 위젯 호출 (오버레이 포함)
+        imagePath = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CameraScreenWithOverlay(
+              guidelineAsset: 'assets/fitting/body_guideline.png',
+            ),
+          ),
+        );
+      } else if (choice == "gallery") {
+        // image_picker를 사용한 앨범 선택
+        final XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
+        imagePath = image?.path;
+      }
+
+      if (imagePath == null) {
         print("🔴 이미지 선택 취소됨");
         return;
       }
@@ -79,6 +130,7 @@ class BodyImageProvider extends ChangeNotifier {
       _isUploading = true;
       notifyListeners();
 
+      final File pickedFile = File(imagePath);
       final result = await _myPageService.uploadMyPageBodyImage(pickedFile);
       if (result != null) {
         _bodyImageUrl = result['body_image'];
