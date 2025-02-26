@@ -114,8 +114,8 @@ class _AddClothScreenState extends State<AddClothScreen> {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.grey[300] : Colors.white,
-          border: Border.all(color: Colors.black87, width: 1.5),
+          color: isSelected ? Colors.blue.shade100 : Colors.white,
+          border: Border.all(color: CupertinoColors.systemGrey2, width: 1.5),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(

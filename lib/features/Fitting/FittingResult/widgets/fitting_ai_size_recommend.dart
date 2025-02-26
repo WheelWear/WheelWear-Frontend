@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'ai_size_recommend_modal.dart'; // 모달창이 정의된 파일
+import 'package:provider/provider.dart';
+import '../fitting_result_provider.dart';
 
 class FittingAISizeRecommend extends StatelessWidget {
   @override
@@ -10,6 +12,11 @@ class FittingAISizeRecommend extends StatelessWidget {
         padding: EdgeInsets.only(right: 20),
         child: ElevatedButton.icon(
           onPressed: () {
+            final fittingResultProvider = Provider.of<FittingResultProvider>(context, listen: false);
+
+            // 객체 전체를 디버그 출력 (toString()이 오버라이드 되어 있다면 객체의 모든 내용이 출력됩니다)
+            debugPrint("Selected image object details: ${fittingResultProvider.selectedImage?.image}");
+
             // 버튼 누르면 모달창을 띄웁니다.
             showDialog(
               context: context,

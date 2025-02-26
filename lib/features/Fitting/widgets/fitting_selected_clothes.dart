@@ -11,6 +11,7 @@ import '../fitting_service.dart';
 import '../FittingResult/fitting_result_model.dart';
 import 'package:wheelwear_frontend/utils/system_alert_dialog.dart';
 import 'package:wheelwear_frontend/utils/retryable_cached_network_image.dart';
+import '../fitting_closet/providers/clothing_confirmation_provider.dart';
 
 class FittingSelectedClothes extends StatefulWidget {
   final VoidCallback onToggleCloset;
@@ -25,8 +26,18 @@ class FittingSelectedClothes extends StatefulWidget {
 class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
   bool _isLoading = false;
 
-  /// 🟢 피팅 요청 실행
-  ///
+  void _fetchData() {
+    final bodyImageProvider = Provider.of<BodyImageProvider>(context, listen: false);
+    bodyImageProvider.fetchBodyImage();
+    final clothingConfirmationProvider = Provider.of<ClothingConfirmationProvider>(context, listen: false);
+    clothingConfirmationProvider.clearConfirmation();
+
+    debugPrint("디버그: _fetchData 호출");
+    debugPrint(bodyImageProvider.toJson().toString());
+    debugPrint(clothingConfirmationProvider.toJson().toString());
+  }
+
+  /// 🟢 피팅 요청 실
   Future<void> _startFitting() async {
     int false_count = 0;
     final clothingConfirmationProvider = Provider.of<ClothingConfirmationProvider>(context, listen: false);
@@ -94,6 +105,7 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
     }
 
     debugPrint("디버그: 피팅 결과 이미지 개수: ${fittingResultProvider.fittingImages.length}");
+    debugPrint(fittingResultProvider.toJson().toString());
     if (fittingResultProvider.fittingImages.isNotEmpty) {
       setState(() {
         _isLoading = false;
@@ -130,7 +142,12 @@ class _FittingSelectedClothesState extends State<FittingSelectedClothes> {
           child: FittingResultScreen(),
         ),
       ),
-    );
+    ).then((_) {
+      // 피팅 결과 화면이 종료되면 이곳에서 데이터를 다시 받아오는 로직을 실행합니다.
+      _fetchData();
+    });
+
+
   }
 
   @override

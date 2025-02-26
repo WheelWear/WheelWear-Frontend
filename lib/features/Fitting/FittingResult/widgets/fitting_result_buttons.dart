@@ -3,8 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wheelwear_frontend/utils/system_alert_dialog.dart';
+import '../../fitting_service.dart';
 import 'retry_fitting.dart';
 import '../fitting_result_provider.dart'; // Provider 임포트
+import 'package:wheelwear_frontend/utils/retryable_cached_network_image.dart';
 
 class FittingResultButtons extends StatelessWidget {
   const FittingResultButtons({Key? key}) : super(key: key);
@@ -31,16 +33,35 @@ class FittingResultButtons extends StatelessWidget {
           _buildMainButton(
             CupertinoIcons.arrow_down_circle_fill,
             "코디에 저장",
-                () {
-              // 현재 선택된 이미지 id 출력
-              final provider = Provider.of<FittingResultProvider>(context, listen: false);
-              final selectedImage = provider.selectedImage;
-              if (selectedImage?.bodyImage != null) {
-                print("현재 선택된 이미지 id: ${selectedImage!.bodyImage!.id}");
-              } else {
-                print("현재 선택된 이미지 id가 없습니다.");
+                () async {
+              try {
+                final result = await vton_image_saved(context);
+                if (result) {
+                  // 성공 시 성공 다이얼로그 처리
+                  await SystemAlertDialog.show(
+                    context: context,
+                    title: "코디 저장 완료",
+                    message: "코디 저장이 완료되었습니다.",
+                    alertType: AlertType.success,
+                  );
+                } else {
+                  // 실패 시 실패 다이얼로그 처리
+                  await SystemAlertDialog.show(
+                    context: context,
+                    title: "오류",
+                    message: "코디 저장에 실패하였습니다.",
+                    alertType: AlertType.error,
+                  );
+                }
+              } catch (e) {
+                // 예상치 못한 예외 처리
+                await SystemAlertDialog.show(
+                  context: context,
+                  title: "오류",
+                  message: "특정 로직 수행 중 오류가 발생하였습니다:\n$e",
+                  alertType: AlertType.error,
+                );
               }
-              print("✅ 코디 저장 기능");
             },
           ),
           Expanded(
@@ -50,28 +71,54 @@ class FittingResultButtons extends StatelessWidget {
                 CupertinoIcons.arrow_right_arrow_left,
                 "추가 피팅하기",
                     () async {
-                  // 현재 선택된 이미지 id 출력
-                  final provider = Provider.of<FittingResultProvider>(context, listen: false);
-                  final selectedImage = provider.selectedImage;
-                  if (selectedImage?.bodyImage != null) {
-                    print("현재 선택된 이미지 id: ${selectedImage!.bodyImage!.id}");
-                  } else {
-                    print("현재 선택된 이미지 id가 없습니다.");
-                  }
+                  // 로딩 다이얼로그 표시 (barrierDismissible: false)
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) {
+                      return Center(
+                        child: CupertinoActivityIndicator(radius: 15),
+                      );
+                    },
+                  );
+
                   try {
-                    bool result = await performSpecificLogic();
-                    if (result) {
-                      Navigator.pop(context);
+                    final result_first = await vton_image_saved(context);
+                    if (result_first) {
+                      // vton 이미지 저장 성공 후, 바디 이미지 저장
+                      final result_second = await patch_body_image(context);
+                      // 로딩 다이얼로그 제거
+                      Navigator.of(context).pop();
+                      if (result_second) {
+                        await SystemAlertDialog.show(
+                          context: context,
+                          title: "성공",
+                          message: "바디 이미지 저장에 성공하였습니다.",
+                          alertType: AlertType.success,
+                        );
+                        Navigator.of(context).pop();
+                      } else {
+                        await SystemAlertDialog.show(
+                          context: context,
+                          title: "오류",
+                          message: "바디 이미지 저장에 실패하였습니다.",
+                          alertType: AlertType.error,
+                        );
+                      }
                     } else {
-                      SystemAlertDialog.show(
+                      // vton 이미지 저장 실패 시 로딩 제거 후 오류 다이얼로그 표시
+                      Navigator.of(context).pop();
+                      await SystemAlertDialog.show(
                         context: context,
                         title: "오류",
-                        message: "특정 로직 수행 중 문제가 발생하였습니다.",
+                        message: "코디 저장에 실패하였습니다.",
                         alertType: AlertType.error,
                       );
                     }
                   } catch (e) {
-                    SystemAlertDialog.show(
+                    // 예외 발생 시 로딩 제거 후 오류 다이얼로그 표시
+                    Navigator.of(context).pop();
+                    await SystemAlertDialog.show(
                       context: context,
                       title: "오류",
                       message: "특정 로직 수행 중 오류가 발생하였습니다:\n$e",

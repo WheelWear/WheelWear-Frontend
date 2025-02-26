@@ -47,25 +47,24 @@ class _ToggleImageWidgetState extends State<ToggleImageWidget> {
             bottom: 10,
             right: 10,
             child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  _isToggled = !_isToggled;
-                });
-              },
-                child: Container(
-                  width: 60,
-                  // height: 50,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 2),
-                  ),
-                  child: RetryableCachedNetworkImage(
-                    imageUrl: overlayImageUrl,
-                    fit: BoxFit.contain,
-                    borderRadius: 0,
-                  ),
+            onTap: () {
+              setState(() {
+                _isToggled = !_isToggled;
+              });
+            },
+              child: Container(
+                width: 60,
+                // height: 50,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                child: RetryableCachedNetworkImage(
+                  imageUrl: overlayImageUrl,
+                  fit: BoxFit.contain,
+                  borderRadius: 0,
                 ),
               ),
-
+            ),
           ),
         ],
       ),
@@ -81,7 +80,7 @@ class FittingResultImages extends StatelessWidget {
   Widget build(BuildContext context) {
     final fittingResultProvider = Provider.of<FittingResultProvider>(context);
     final fittingImages = fittingResultProvider.fittingImages;
-    debugPrint("fittingImages: $fittingImages");
+    debugPrint("fittingImages 개수: ${fittingImages.length}");
 
     return Scaffold(
       body: fittingImages.isEmpty
@@ -129,7 +128,11 @@ class _FittingResultImageSliderState extends State<_FittingResultImageSlider> {
               _currentPage = index;
             });
             final currentImage = widget.fittingImages[index];
-            Provider.of<FittingResultProvider>(context, listen: false).updateSelectedImage(currentImage);
+            final fittingResultProvider = Provider.of<FittingResultProvider>(context, listen: false);
+            fittingResultProvider.updateSelectedImage(currentImage);
+
+            // 객체 전체를 디버그 출력 (toString()이 오버라이드 되어 있다면 객체의 모든 내용이 출력됩니다)
+            debugPrint("Selected image object details: ${fittingResultProvider.selectedImage?.image}");
           },
           children: widget.fittingImages.map((imageModel) {
             return Padding(

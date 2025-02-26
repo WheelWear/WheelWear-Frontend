@@ -17,4 +17,11 @@ class ClothingConfirmationProvider extends ChangeNotifier {
     confirmedClothes.clear();
     notifyListeners();
   }
+
+  /// 현재 상태를 JSON 형식의 Map으로 변환합니다.
+  Map<String, dynamic> toJson() {
+    return {
+      'confirmedClothes': confirmedClothes,
+    };
+  }
 }

@@ -65,6 +65,7 @@ class BodyImage {
 
 /// VirtualTryOnImage 모델 수정 - AI 사이즈 추천 변수 추가 (널 허용)
 class VirtualTryOnImage {
+  final int id;
   final String image;
   final String title;
   final BodyImage? bodyImage;
@@ -77,6 +78,7 @@ class VirtualTryOnImage {
 
 
   VirtualTryOnImage({
+    required this.id,
     required this.image,
     required this.title,
     this.bodyImage,
@@ -91,6 +93,7 @@ class VirtualTryOnImage {
   /// JSON 데이터를 받아 객체로 변환합니다.
   factory VirtualTryOnImage.fromJson(Map<String, dynamic> json) {
     return VirtualTryOnImage(
+      id: json['id'] as int,
       image: json['image'] as String,
       title: json['title'] as String,
       bodyImage: json['body_image'] != null
@@ -114,6 +117,7 @@ class VirtualTryOnImage {
   /// 객체를 JSON 형태(Map)로 변환합니다.
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'image': image,
       'title': title,
       'body_image': bodyImage?.toJson(),
@@ -127,15 +131,39 @@ class VirtualTryOnImage {
   }
 }
 
-/// 추천 사이즈 정보를 관리할 모델 (여기서는 image 필드를 id로 사용합니다)
-class FittingImageLLM {
-  final String id;
-  final String? recommendedSize;
-  final String? recommendedSizeDescription;
 
-  FittingImageLLM({
-    required this.id,
-    this.recommendedSize,
-    this.recommendedSizeDescription,
+class SizeRecommendation {
+  final String recommendSize;
+  final String additionalExplanation;
+  final List<dynamic> references;
+  final int referenceNum;
+  bool isLoading; // 로딩 상태 추가
+
+  SizeRecommendation({
+    required this.recommendSize,
+    required this.additionalExplanation,
+    required this.references,
+    required this.referenceNum,
+    this.isLoading = false,
   });
+
+  factory SizeRecommendation.fromJson(Map<String, dynamic> json) {
+    return SizeRecommendation(
+      recommendSize: json['recommend_size'] as String,
+      additionalExplanation: json['additional_explanation'] as String,
+      references: json['references'] as List<dynamic>,
+      referenceNum: json['reference_num'] as int,
+      // isLoading은 JSON에 없으므로 기본값 사용
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'recommend_size': recommendSize,
+      'additional_explanation': additionalExplanation,
+      'references': references,
+      'reference_num': referenceNum,
+      // isLoading은 내부 상태 관리용으로 JSON에 포함하지 않을 수 있음.
+    };
+  }
 }

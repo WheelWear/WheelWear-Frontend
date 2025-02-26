@@ -144,4 +144,14 @@ class BodyImageProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  /// 현재 상태를 JSON 형식의 Map으로 변환합니다.
+  Map<String, dynamic> toJson() {
+    return {
+      'body_image_url': _bodyImageUrl,
+      'is_fetching': _isFetching,
+      'is_uploading': _isUploading,
+    };
+  }
 }
+
