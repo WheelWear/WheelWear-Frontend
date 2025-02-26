@@ -4,9 +4,10 @@ import 'package:camera/camera.dart'; // 📌 (추가) 카메라 패키지 불러
 import 'dart:io'; // 📌 (추가) 파일 처리를 위한 dart:io 추가
 import './services/api_service.dart';
 
-void uploadClothSubmit(File selectedImage, String closetType, String size, String brand, String closetCategory){
+void uploadClothSubmit(XFile selectedImage, String closetType, String size, String brand, String closetCategory){
   ApiService uploadService = ApiService();
-  uploadService.uploadClothItems(selectedImage, closetType, size, brand, closetCategory);
+  File imageFile = File(selectedImage.path);
+  uploadService.uploadClothItems(imageFile, closetType, size, brand, closetCategory);
 }
 
 class ClothScreen extends StatefulWidget { // 🔄 (수정) StatelessWidget → StatefulWidget으로 변경 (이미지 업데이트 필요)
@@ -14,7 +15,7 @@ class ClothScreen extends StatefulWidget { // 🔄 (수정) StatelessWidget → 
   _ClothScreenState createState() => _ClothScreenState();
 }
 class _ClothScreenState extends State<ClothScreen> {
-  File? _selectedImage;
+  XFile? _selectedImage;
 
   String? _selectedCategory; // 🔹 "내 옷" 또는 "위시리스트" 선택 (배타적)
   String? _selectedType; // 🔹 "상의", "하의", "원피스" 선택 (배타적)
@@ -46,7 +47,7 @@ class _ClothScreenState extends State<ClothScreen> {
                     );
                     if (imagePath != null) {
                       setState(() {
-                        _selectedImage = File(imagePath);
+                        _selectedImage = XFile(imagePath);
                       });
                     }
                   },
@@ -59,7 +60,7 @@ class _ClothScreenState extends State<ClothScreen> {
                     ),
                     child: _selectedImage == null
                         ? Center(child: Text("사진을 추가해주세요!", style: TextStyle(color: CupertinoColors.white, fontSize: 18)))
-                        : Image.file(_selectedImage!, fit: BoxFit.cover),
+                        : Image.file(File(_selectedImage!.path), fit: BoxFit.cover),
                   ),
                 ),
 
@@ -74,14 +75,14 @@ class _ClothScreenState extends State<ClothScreen> {
                   children: [
                     CustomBorderButton(
                       label: "내 옷",
-                      isSelected: _selectedCategory == "내 옷",
-                      onTap: () => setState(() => _selectedCategory = "내 옷"),
+                      isSelected: _selectedCategory == "myClothes",
+                      onTap: () => setState(() => _selectedCategory = "myClothes"),
                     ),
                     SizedBox(width: 15),
                     CustomBorderButton(
                       label: "위시리스트",
-                      isSelected: _selectedCategory == "위시리스트",
-                      onTap: () => setState(() => _selectedCategory = "위시리스트"),
+                      isSelected: _selectedCategory == "wishlist",
+                      onTap: () => setState(() => _selectedCategory = "wishlist"),
                     ),
                   ],
                 ),
@@ -97,20 +98,20 @@ class _ClothScreenState extends State<ClothScreen> {
                   children: [
                     CustomBorderButton(
                       label: "상의",
-                      isSelected: _selectedType == "상의",
-                      onTap: () => setState(() => _selectedType = "상의"),
+                      isSelected: _selectedType == "Top",
+                      onTap: () => setState(() => _selectedType = "Top"),
                     ),
                     SizedBox(width: 15),
                     CustomBorderButton(
                       label: "하의",
-                      isSelected: _selectedType == "하의",
-                      onTap: () => setState(() => _selectedType = "하의"),
+                      isSelected: _selectedType == "Bottom",
+                      onTap: () => setState(() => _selectedType = "Bottom"),
                     ),
                     SizedBox(width: 15),
                     CustomBorderButton(
                       label: "원피스",
-                      isSelected: _selectedType == "원피스",
-                      onTap: () => setState(() => _selectedType = "원피스"),
+                      isSelected: _selectedType == "Dress",
+                      onTap: () => setState(() => _selectedType = "Dress"),
                     ),
                   ],
                 ),
@@ -185,7 +186,7 @@ class _ClothScreenState extends State<ClothScreen> {
                     print("사이즈: ${_size.text}");
                     print("브랜드: ${_brand.text}");
                     print("선택된 카테고리: $_selectedCategory");
-                    uploadClothSubmit(_selectedImage, _selectedType, _size.text, _brand.text, _selectedCategory);
+                    uploadClothSubmit(_selectedImage!, _selectedType!, _size.text, _brand.text, _selectedCategory!);
                   },
                 ),
                 SizedBox(height: 10),
