@@ -2,14 +2,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart'; // 📌 (추가) 카메라 패키지 불러오기
 import 'dart:io'; // 📌 (추가) 파일 처리를 위한 dart:io 추가
+import './services/api_service.dart';
+
+void UploadClothSubmit(File selectedImage, String ClosetType, String Size, String Brand, String ClosetCategory){
+  ApiService upload_service = ApiService();
+  upload_service.uploadClothItems(selectedImage, ClosetType, Size, Brand, ClosetCategory)ploadClothItems(selectedImage, ClosetType, Size, Brand, ClosetCategory);
+}
 
 class ClothScreen extends StatefulWidget { // 🔄 (수정) StatelessWidget → StatefulWidget으로 변경 (이미지 업데이트 필요)
   @override
   _ClothScreenState createState() => _ClothScreenState();
 }
+class _ClothScreenState extends State<ClothScreen> {
+  File? _selectedImage;
 
-class _ClothScreenState extends State<ClothScreen> { // 🔄 (추가) 이미지 상태 저장을 위한 StatefulWidget
-  File? _selectedImage; // 📌 (추가) 선택된 이미지 저장 변수
+  String? _selectedCategory; // 🔹 "내 옷" 또는 "위시리스트" 선택 (배타적)
+  String? _selectedType; // 🔹 "상의", "하의", "원피스" 선택 (배타적)
+
+  final TextEditingController _size = TextEditingController();
+  final TextEditingController _brand = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +37,14 @@ class _ClothScreenState extends State<ClothScreen> { // 🔄 (추가) 이미지 
               children: [
                 SizedBox(height: 15),
 
-                // 🔹 이미지 영역 (📌 수정: 클릭 시 카메라 실행)
-                GestureDetector( // 📌 (추가) 클릭 이벤트 추가
-                  onTap: () async { // 📌 (추가) 카메라 화면으로 이동하는 기능 추가
+                // 🔹 이미지 추가 (클릭 시 카메라 실행)
+                GestureDetector(
+                  onTap: () async {
                     final imagePath = await Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => CameraScreen()),
                     );
-                    if (imagePath != null) { // 📌 (추가) 촬영한 이미지가 있으면 업데이트
+                    if (imagePath != null) {
                       setState(() {
                         _selectedImage = File(imagePath);
                       });
@@ -46,54 +57,88 @@ class _ClothScreenState extends State<ClothScreen> { // 🔄 (추가) 이미지 
                       color: CupertinoColors.systemGrey4,
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    child: _selectedImage == null // 🔄 (수정) 이미지가 있으면 표시, 없으면 텍스트 표시
-                        ? Center(
-                      child: Text(
-                        "사진을 추가해주세요!",
-                        style: TextStyle(color: CupertinoColors.white, fontSize: 18),
-                      ),
-                    )
-                        : Image.file(_selectedImage!, fit: BoxFit.cover), // 📌 (추가) 촬영한 이미지 표시
+                    child: _selectedImage == null
+                        ? Center(child: Text("사진을 추가해주세요!", style: TextStyle(color: CupertinoColors.white, fontSize: 18)))
+                        : Image.file(_selectedImage!, fit: BoxFit.cover),
                   ),
                 ),
 
                 SizedBox(height: 10),
-                Text(
-                  "올바른 카테고리를 선택해주세요.",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
+                Text("올바른 카테고리를 선택해주세요.", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
 
                 SizedBox(height: 5),
 
-                // 🔹 "내 옷", "위시리스트" 버튼
+                // 🔹 "내 옷" / "위시리스트" (배타적 선택)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    CustomBorderButton(label: "내 옷"),
+                    CustomBorderButton(
+                      label: "내 옷",
+                      isSelected: _selectedCategory == "내 옷",
+                      onTap: () => setState(() => _selectedCategory = "내 옷"),
+                    ),
                     SizedBox(width: 15),
-                    CustomBorderButton(label: "위시리스트"),
+                    CustomBorderButton(
+                      label: "위시리스트",
+                      isSelected: _selectedCategory == "위시리스트",
+                      onTap: () => setState(() => _selectedCategory = "위시리스트"),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 10),
+                Text("어떤 종류의 옷인가요?", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+
+                SizedBox(height: 5),
+
+                // 🔹 "상의" / "하의" / "원피스" (배타적 선택)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomBorderButton(
+                      label: "상의",
+                      isSelected: _selectedType == "상의",
+                      onTap: () => setState(() => _selectedType = "상의"),
+                    ),
+                    SizedBox(width: 15),
+                    CustomBorderButton(
+                      label: "하의",
+                      isSelected: _selectedType == "하의",
+                      onTap: () => setState(() => _selectedType = "하의"),
+                    ),
+                    SizedBox(width: 15),
+                    CustomBorderButton(
+                      label: "원피스",
+                      isSelected: _selectedType == "원피스",
+                      onTap: () => setState(() => _selectedType = "원피스"),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 15),
+
+                // 🔹 "사이즈 입력(선택)" 왼쪽
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "사이즈 입력(선택)",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                    ),
                   ],
                 ),
 
                 SizedBox(height: 5),
 
-                Text(
-                  "올바른 카테고리를 선택해주세요.",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-
-                SizedBox(height: 5),
-
-                // 🔹 "상의", "하의", "원피스" 버튼
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    CustomBorderButton(label: "상의"),
-                    SizedBox(width: 15),
-                    CustomBorderButton(label: "하의"),
-                    SizedBox(width: 15),
-                    CustomBorderButton(label: "원피스"),
-                  ],
+                // 🔹 사이즈 입력 칸
+                CupertinoTextField(
+                  placeholder: "사이즈를 입력하세요",
+                  padding: EdgeInsets.all(12),
+                  controller: _size,
+                  decoration: BoxDecoration(
+                    color: CupertinoColors.systemGrey6,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
 
                 SizedBox(height: 5),
@@ -121,21 +166,27 @@ class _ClothScreenState extends State<ClothScreen> { // 🔄 (추가) 이미지 
                 CupertinoTextField(
                   placeholder: "브랜드를 입력하세요",
                   padding: EdgeInsets.all(12),
+                  controller: _brand,
                   decoration: BoxDecoration(
                     color: CupertinoColors.systemGrey6,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
 
-                SizedBox(height: 15),
+                SizedBox(height: 5),
 
-                // 🔹 완료 버튼 (검은색 배경)
+                // 🔹 완료 버튼
                 CustomBorderButton(
                   label: "완료",
                   isFullWidth: true,
                   isBlackButton: true,
                   onTap: () {
-                    print("완료 버튼 클릭!");
+                    print("선택된 옷 타입: $_closetype");
+                    print("사이즈: ${_size.text}");
+                    print("브랜드: ${_brand.text}");
+                    print("선택된 카테고리: $_selectedCategory");
+                    UploadClothSubmit(_selectedImage, _closetype, _size.text, _brand.text, _selectedCategory)
+
                   },
                 ),
                 SizedBox(height: 10),
@@ -201,11 +252,13 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 }
 
-class CustomBorderButton extends StatefulWidget {
+// 📌 배타적 선택이 적용된 CustomBorderButton
+class CustomBorderButton extends StatelessWidget {
   final String label;
   final bool isFullWidth;
   final bool isBlackButton;
   final VoidCallback? onTap;
+  final bool isSelected; // 🔹 추가: 현재 버튼이 선택되었는지 여부
 
   const CustomBorderButton({
     Key? key,
@@ -213,38 +266,29 @@ class CustomBorderButton extends StatefulWidget {
     this.isFullWidth = false,
     this.isBlackButton = false,
     this.onTap,
+    this.isSelected = false, // 🔹 기본값 false
   }) : super(key: key);
-
-  @override
-  _CustomBorderButtonState createState() => _CustomBorderButtonState();
-}
-
-class _CustomBorderButtonState extends State<CustomBorderButton> {
-  bool _isToggled = false; // 버튼 상태 토글
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        setState(() => _isToggled = !_isToggled); // 버튼 눌릴 때마다 상태 변경
-        if (widget.onTap != null) widget.onTap!();
-      },
+      onTap: onTap,
       child: AnimatedContainer(
         duration: Duration(milliseconds: 100),
-        width: widget.isFullWidth ? double.infinity : null,
-        padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        width: isFullWidth ? double.infinity : null,
+        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
-          color: widget.isBlackButton
-              ? (_isToggled ? CupertinoColors.systemGrey : CupertinoColors.black) // 완료 버튼 (토글)
-              : (_isToggled ? CupertinoColors.systemGrey2 : CupertinoColors.white), // 일반 버튼 (토글)
+          color: isBlackButton
+              ? (isSelected ? CupertinoColors.systemGrey : CupertinoColors.black) // 완료 버튼 (토글)
+              : (isSelected ? CupertinoColors.systemGrey2 : CupertinoColors.white), // 일반 버튼 (토글)
           border: Border.all(color: CupertinoColors.black, width: 2),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Center(
           child: Text(
-            widget.label,
+            label,
             style: TextStyle(
-              color: widget.isBlackButton ? CupertinoColors.white : CupertinoColors.black,
+              color: isBlackButton ? CupertinoColors.white : CupertinoColors.black,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
