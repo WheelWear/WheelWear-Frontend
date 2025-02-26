@@ -3,15 +3,27 @@ import 'fitting_result_model.dart'; // VirtualTryOnImage 모델 파일의 경로
 
 class FittingResultProvider extends ChangeNotifier {
   List<VirtualTryOnImage> _fittingImages = [];
-  List<VirtualTryOnImage> get fittingImages => _fittingImages;
+  VirtualTryOnImage? _selectedImage;
 
-  void clearFittingImages() {
-    _fittingImages.clear();
-    notifyListeners();
-  }
+  List<VirtualTryOnImage> get fittingImages => _fittingImages;
+  VirtualTryOnImage? get selectedImage => _selectedImage;
 
   void setFittingImages(List<VirtualTryOnImage> images) {
     _fittingImages = images;
+    // 처음에 첫번째 이미지를 선택
+    if (images.isNotEmpty) {
+      _selectedImage = images[0];
+    }
+    notifyListeners();
+  }
+
+  void updateSelectedImage(VirtualTryOnImage image) {
+    _selectedImage = image;
+    notifyListeners();
+  }
+
+  void clearFittingImages() {
+    _fittingImages.clear();
     notifyListeners();
   }
 

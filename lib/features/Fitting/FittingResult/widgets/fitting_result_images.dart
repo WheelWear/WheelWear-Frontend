@@ -128,6 +128,8 @@ class _FittingResultImageSliderState extends State<_FittingResultImageSlider> {
             setState(() {
               _currentPage = index;
             });
+            final currentImage = widget.fittingImages[index];
+            Provider.of<FittingResultProvider>(context, listen: false).updateSelectedImage(currentImage);
           },
           children: widget.fittingImages.map((imageModel) {
             return Padding(

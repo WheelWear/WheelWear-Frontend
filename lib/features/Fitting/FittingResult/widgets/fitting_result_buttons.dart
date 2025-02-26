@@ -1,8 +1,10 @@
 // fitting_result_buttons.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:wheelwear_frontend/utils/system_alert_dialog.dart';
 import 'retry_fitting.dart';
+import '../fitting_result_provider.dart'; // Provider 임포트
 
 class FittingResultButtons extends StatelessWidget {
   const FittingResultButtons({Key? key}) : super(key: key);
@@ -30,6 +32,14 @@ class FittingResultButtons extends StatelessWidget {
             CupertinoIcons.arrow_down_circle_fill,
             "코디에 저장",
                 () {
+              // 현재 선택된 이미지 id 출력
+              final provider = Provider.of<FittingResultProvider>(context, listen: false);
+              final selectedImage = provider.selectedImage;
+              if (selectedImage?.bodyImage != null) {
+                print("현재 선택된 이미지 id: ${selectedImage!.bodyImage!.id}");
+              } else {
+                print("현재 선택된 이미지 id가 없습니다.");
+              }
               print("✅ 코디 저장 기능");
             },
           ),
@@ -40,6 +50,14 @@ class FittingResultButtons extends StatelessWidget {
                 CupertinoIcons.arrow_right_arrow_left,
                 "추가 피팅하기",
                     () async {
+                  // 현재 선택된 이미지 id 출력
+                  final provider = Provider.of<FittingResultProvider>(context, listen: false);
+                  final selectedImage = provider.selectedImage;
+                  if (selectedImage?.bodyImage != null) {
+                    print("현재 선택된 이미지 id: ${selectedImage!.bodyImage!.id}");
+                  } else {
+                    print("현재 선택된 이미지 id가 없습니다.");
+                  }
                   try {
                     bool result = await performSpecificLogic();
                     if (result) {
@@ -51,7 +69,6 @@ class FittingResultButtons extends StatelessWidget {
                         message: "특정 로직 수행 중 문제가 발생하였습니다.",
                         alertType: AlertType.error,
                       );
-
                     }
                   } catch (e) {
                     SystemAlertDialog.show(
