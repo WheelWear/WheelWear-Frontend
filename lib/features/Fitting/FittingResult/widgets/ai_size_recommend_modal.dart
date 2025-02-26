@@ -1,131 +1,86 @@
-import 'package:flutter/cupertino.dart';
+// ai_size_recommend_modal.dart
 import 'package:flutter/material.dart';
 
 class AISizeRecommendModal extends StatelessWidget {
-  final bool? isLoading;
-  final bool? errorFlag;
   final String recommendedSize;
   final String recommendedSizeDescription;
+  final bool errorFlag;
+  final bool isLoading;
+  final List<String>? references;
+  final int? referenceNum;
 
   const AISizeRecommendModal({
     Key? key,
-    this.isLoading,
-    this.errorFlag,
-    this.recommendedSize = "M",
-    this.recommendedSizeDescription = "M Size를 추천드립니다.",
+    required this.recommendedSize,
+    required this.recommendedSizeDescription,
+    this.references,
+    this.referenceNum,
+    required this.errorFlag,
+    required this.isLoading,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final bool loading = isLoading ?? false;
-    final bool flag = errorFlag ?? false;
-
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Container(
-        padding: EdgeInsets.all(20),
-        // 높이 제한을 주어 스크롤 가능 영역이 생깁니다.
-        constraints: BoxConstraints(
-          maxHeight: 300,
-        ),
-        child: Stack(
-          children: [
-            // 오른쪽 상단 X 버튼 (쿠퍼티노 스타일)
-            Positioned(
-              right: 0,
-              child: CupertinoButton(
-                padding: EdgeInsets.all(10),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Icon(
-                  CupertinoIcons.clear,
-                  size: 24,
-                ),
-              ),
-            ),
-            // 가운데 내용 영역을 SingleChildScrollView로 감쌉니다.
-            Positioned.fill(
-              top: 50, // X 버튼 아래부터 시작하도록 위치 조정 (필요에 따라 수정)
-              child: SingleChildScrollView(
-                child: Center(
-                  child: flag ? _buildErrorContent() : _buildContent(loading),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // 로딩 중이면 로딩 이펙트를, 완료되었으면 추천 결과를 표시합니다.
-  Widget _buildContent(bool loading) {
-    if (loading) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Stack(
         children: [
-          CupertinoActivityIndicator(radius: 15),
-          SizedBox(height: 20),
-          Text(
-            "분석 진행 중...",
-            style: TextStyle(fontSize: 16),
-          ),
-        ],
-      );
-    } else {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            "$recommendedSize 사이즈를 추천합니다!",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 20),
-          RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: TextStyle(color: Colors.black),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                TextSpan(
-                  text: "다음은 AI가 분석한 추천 사이즈에 대한 설명입니다:\n\n",
-                  style: TextStyle(fontSize: 11),
-                ),
-                TextSpan(
-                  text: recommendedSizeDescription,
-                  style: TextStyle(fontSize: 16),
-                ),
+                if (isLoading) ...[
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 20),
+                  const Text("분석 진행 중...", style: TextStyle(fontSize: 16)),
+                ] else ...[
+                  Text(
+                    recommendedSize.isNotEmpty
+                        ? "추천 사이즈: $recommendedSize"
+                        : "추천 사이즈 결과",
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    recommendedSizeDescription,
+                    style: const TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                  if (references != null && references!.isNotEmpty)
+                    ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        "참조 번호: ${referenceNum ?? ''}",
+                        style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                      ),
+                    ],
+                  const SizedBox(height: 20),
+                  // 분석 완료 후 닫기 버튼
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("닫기"),
+                  ),
+                ]
               ],
             ),
           ),
+          // 분석 중이 아닐 때만 우측 상단에 X 아이콘 표시 (모달 닫기)
+          if (!isLoading)
+            Positioned(
+              right: 0,
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
         ],
-      );
-    }
-  }
-
-  // 에러 상태를 표시하는 위젯입니다.
-  Widget _buildErrorContent() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          CupertinoIcons.exclamationmark_circle,
-          size: 40,
-          color: CupertinoColors.systemRed,
-        ),
-        SizedBox(height: 20),
-        Text(
-          "본인의 신체사이즈가 입력되지 않았거나 통신에 실패하였습니다.",
-          style: TextStyle(fontSize: 16),
-          textAlign: TextAlign.center,
-        ),
-      ],
+      ),
     );
   }
 }
