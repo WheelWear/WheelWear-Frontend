@@ -42,7 +42,7 @@ class ClosetItemTile extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: Colors.black.withOpacity(0.3),
+                // color: Colors.black.withOpacity(0.3),
               ),
             ),
           Positioned(

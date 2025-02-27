@@ -32,8 +32,8 @@ class _ClosetItemScreenState extends State<ClosetItemScreen> {
             return const Center(child: CupertinoActivityIndicator());
           } else if (provider.error != null) {
             return Center(child: Text('Error: ${provider.error}'));
-          } else if (provider.items.isEmpty) {
-            return const EmptyClosetView();
+          // } else if (provider.items.isEmpty) {
+          //   return const EmptyClosetView();
           } else {
             return ClosetListView(items: provider.items);
           }
