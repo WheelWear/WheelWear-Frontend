@@ -29,45 +29,79 @@ class _ToggleImageWidgetState extends State<ToggleImageWidget> {
     final mainImageUrl = _isToggled ? widget.explanationImageUrl : widget.imageUrl;
     final overlayImageUrl = _isToggled ? widget.imageUrl : widget.explanationImageUrl;
 
-    return AspectRatio(
-      aspectRatio: 1, // 필요에 따라 비율 조정
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // 메인 큰 이미지
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: RetryableCachedNetworkImage(
-              imageUrl: mainImageUrl,
-              fit: BoxFit.cover,
-            ),
+    // return AspectRatio(
+    //   aspectRatio: 1, // 필요에 따라 비율 조정
+    //   child: Stack(
+    //     fit: StackFit.expand,
+    //     children: [
+    //       // 메인 큰 이미지
+    //       ClipRRect(
+    //         borderRadius: BorderRadius.circular(8),
+    //         child: RetryableCachedNetworkImage(
+    //           imageUrl: mainImageUrl,
+    //           fit: BoxFit.cover,
+    //         ),
+    //       ),
+    //       // 오른쪽 하단 오버레이 작은 이미지
+    //       Positioned(
+    //         bottom: 10,
+    //         right: 10,
+    //         child: GestureDetector(
+    //         onTap: () {
+    //           setState(() {
+    //             _isToggled = !_isToggled;
+    //           });
+    //         },
+    //           child: Container(
+    //             width: 60,
+    //             // height: 50,
+    //             decoration: BoxDecoration(
+    //               border: Border.all(color: Colors.white, width: 2),
+    //             ),
+    //             child: RetryableCachedNetworkImage(
+    //               imageUrl: overlayImageUrl,
+    //               fit: BoxFit.contain,
+    //               borderRadius: 0,
+    //             ),
+    //           ),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: RetryableCachedNetworkImage(
+            imageUrl: mainImageUrl,
+            fit: BoxFit.contain, // 비율 유지
           ),
-          // 오른쪽 하단 오버레이 작은 이미지
-          Positioned(
-            bottom: 10,
-            right: 10,
-            child: GestureDetector(
+        ),
+        Positioned(
+          bottom: 10,
+          right: 10,
+          child: GestureDetector(
             onTap: () {
               setState(() {
                 _isToggled = !_isToggled;
               });
             },
-              child: Container(
-                width: 60,
-                // height: 50,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
-                child: RetryableCachedNetworkImage(
-                  imageUrl: overlayImageUrl,
-                  fit: BoxFit.contain,
-                  borderRadius: 0,
-                ),
+            child: Container(
+              width: 60,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: RetryableCachedNetworkImage(
+                imageUrl: overlayImageUrl,
+                fit: BoxFit.contain,
+                borderRadius: 0,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -82,8 +116,15 @@ class FittingResultImages extends StatelessWidget {
     final fittingImages = fittingResultProvider.fittingImages;
     debugPrint("fittingImages 개수: ${fittingImages.length}");
 
-    return Scaffold(
-      body: fittingImages.isEmpty
+    // return Scaffold(
+    //   body: fittingImages.isEmpty
+    //       ? const Center(child: Text("아직 생성된 피팅 이미지가 없습니다."))
+    //       : _FittingResultImageSlider(
+    //     fittingImages: fittingImages,
+    //   ),
+    // );
+    return Container(
+      child: fittingImages.isEmpty
           ? const Center(child: Text("아직 생성된 피팅 이미지가 없습니다."))
           : _FittingResultImageSlider(
         fittingImages: fittingImages,

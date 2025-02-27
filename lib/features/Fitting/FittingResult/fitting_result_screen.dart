@@ -10,13 +10,16 @@ class FittingResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-
+    bool isTablet = MediaQuery.of(context).size.width > 600; // 아이패드 기준
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // 뒤로가기 아이콘 자동 생성 방지
-        title: Text(
-          "완성된 코디",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        title: Padding(
+          padding: const EdgeInsets.only(top: 20.0), // 상단에 20만큼 여백 추가
+          child: Text(
+            "완성된 코디",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
         ),
         centerTitle: true,
         elevation: 0,
@@ -26,7 +29,7 @@ class FittingResultScreen extends StatelessWidget {
           children: [
             SizedBox(height: 10),
             Container(
-              height: screenHeight * 0.6, // 화면 높이의 60% 적용
+              height: isTablet ? screenHeight * 0.7 : screenHeight * 0.6, // 아이패드에서는 70%, 그 외는 60%
               child: FittingResultImages(),
             ),
             SizedBox(height: 10),

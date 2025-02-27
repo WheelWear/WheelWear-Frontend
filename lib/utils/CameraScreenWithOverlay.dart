@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_exif_rotation/flutter_exif_rotation.dart'; // 추가
 
 /// 커스텀 카메라 위젯 (오버레이 가이드라인 이미지를 매개변수로 전달)
 class CameraScreenWithOverlay extends StatefulWidget {
@@ -43,11 +44,9 @@ class _CameraScreenWithOverlayState extends State<CameraScreenWithOverlay> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("커스텀 카메라"),
-        centerTitle: true,
-      ),
-      body: _isCameraInitialized
+      appBar: AppBar(title: Text("커스텀 카메라"), centerTitle: true),
+      body:
+      _isCameraInitialized
           ? Stack(
         children: [
           CameraPreview(_controller!),
@@ -69,8 +68,13 @@ class _CameraScreenWithOverlayState extends State<CameraScreenWithOverlay> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           if (_controller != null) {
+            // 사진 촬영
             XFile file = await _controller!.takePicture();
-            Navigator.pop(context, file.path);
+            // EXIF 정보를 기반으로 이미지 회전 보정 (갤럭시 등에서 뒤집힘 문제 해결)
+            final fixedFile = await FlutterExifRotation.rotateImage(
+              path: file.path,
+            );
+            Navigator.pop(context, fixedFile.path);
           }
         },
         child: Icon(Icons.camera),

@@ -12,7 +12,7 @@
 #   end
 #
 # end
-platform :ios, '18.3'  # iOS 버전 명시 (12.0보다 최신으로 설정 추천)
+# platform :ios, '18.3'  # iOS 버전 명시 (12.0보다 최신으로 설정 추천)
 
 def flutter_root
   # Flutter 루트 경로를 동적으로 찾는 코드

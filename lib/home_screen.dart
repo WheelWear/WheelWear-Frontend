@@ -37,6 +37,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isTablet = screenWidth > 600; // 아이패드 기준으로 너비 600 이상
+    final isLandscape = screenWidth > screenHeight; // 가로 모드 확인
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<BodyImageProvider>(
@@ -46,82 +51,86 @@ class _HomeScreenState extends State<HomeScreen> {
           create: (_) => FittingResultProvider(),
         ),
       ],
-      child: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _selectedIndex = index;
-                  });
-                },
+      child: Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: Column(
                 children: [
-                  MultiProvider(
-                    providers: [
-                      ChangeNotifierProvider<closet.ClosetFilterProvider>(
-                        create: (_) => closet.ClosetFilterProvider(),
-                      ),
-                      ChangeNotifierProvider<closet.SelectionProvider>(
-                        create: (_) => closet.SelectionProvider(),
-                      ),
-                      ChangeNotifierProvider<closet.ClosetItemsProvider>(
-                        create: (_) => closet.ClosetItemsProvider(),
-                      ),
-                    ],
-                    child: ClosetHeaderScreen(),
-                  ),
-                  MultiProvider(
-                    providers: [
-                      ChangeNotifierProvider<fitting.ClothingConfirmationProvider>(
-                        create: (_) => fitting.ClothingConfirmationProvider(),
-                      ),
-                      ChangeNotifierProvider<fitting.ClosetItemsProvider>(
-                        create: (_) => fitting.ClosetItemsProvider(),
-                      ),
-                      ChangeNotifierProvider<fitting.FittingCreationProvider>(
-                        create: (_) => fitting.FittingCreationProvider(),
-                      ),
-                    ],
-                    child: FittingScreen(),
-                  ),
-                  MultiProvider(
-                    providers: [
-                      ChangeNotifierProvider<ProfileProvider>(
-                        create: (_) => ProfileProvider(),
-                      ),
-                    ],
-                    child: MyPageScreen(),
-                  ),
-                ],
-              ),
-            ),
-            CupertinoTabBar(
-              backgroundColor: CupertinoColors.white,
-              activeColor: activeColor,
-              inactiveColor: inactiveColor,
-              height: 70,
-              items: [
-                BottomNavigationBarItem(
-                  icon: _buildTabItem(0, CupertinoIcons.square_grid_2x2, "옷장"),
-                  label: '',
-                ),
-                BottomNavigationBarItem(
-                  icon: _buildTabItem(1, CupertinoIcons.house, "피팅룸"),
-                  label: '',
-                ),
-                BottomNavigationBarItem(
-                  icon: _buildTabItem(2, CupertinoIcons.person, "마이페이지"),
-                  label: '',
-                ),
-              ],
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-            ),
+            SizedBox(height: isTablet && isLandscape ? 20.0 : 10.0), // 아이패드 가로 모드에서 더 큰 여백
+            Expanded(
+                child: PageView(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _selectedIndex = index;
+                      });
+                    },
+                    children: [
+                MultiProvider(
+                providers: [
+                ChangeNotifierProvider<closet.ClosetFilterProvider>(
+                    create: (_) => closet.ClosetFilterProvider(),
+          ),
+          ChangeNotifierProvider<closet.SelectionProvider>(
+            create: (_) => closet.SelectionProvider(),
+          ),
+          ChangeNotifierProvider<closet.ClosetItemsProvider>(
+            create: (_) => closet.ClosetItemsProvider(),
+          ),
           ],
-        ),
-      ),
+          child: ClosetHeaderScreen(),
+    ),
+    MultiProvider(
+    providers: [
+    ChangeNotifierProvider<fitting.ClothingConfirmationProvider>(
+    create: (_) => fitting.ClothingConfirmationProvider(),
+    ),
+    ChangeNotifierProvider<fitting.ClosetItemsProvider>(
+    create: (_) => fitting.ClosetItemsProvider(),
+    ),
+    ChangeNotifierProvider<fitting.FittingCreationProvider>(
+    create: (_) => fitting.FittingCreationProvider(),
+    ),
+    ],
+    child: FittingScreen(),
+    ),
+    MultiProvider(
+    providers: [
+    ChangeNotifierProvider<ProfileProvider>(
+    create: (_) => ProfileProvider(),
+    ),
+    ],
+    child: MyPageScreen(),
+    ),
+    ],
+    ),
+    ),
+    CupertinoTabBar(
+    backgroundColor: CupertinoColors.white,
+    activeColor: activeColor,
+    inactiveColor: inactiveColor,
+    height: isTablet ? 80.0 : 70.0, // 아이패드에서는 탭바 높이 조금 더 크게
+    items: [
+    BottomNavigationBarItem(
+    icon: _buildTabItem(0, CupertinoIcons.square_grid_2x2, "옷장"),
+    label: '',
+    ),
+    BottomNavigationBarItem(
+    icon: _buildTabItem(1, CupertinoIcons.house, "피팅룸"),
+    label: '',
+    ),
+    BottomNavigationBarItem(
+    icon: _buildTabItem(2, CupertinoIcons.person, "마이페이지"),
+    label: '',
+    ),
+    ],
+    currentIndex: _selectedIndex,
+    onTap: _onItemTapped,
+    ),
+    ],
+    ),
+    ),
+    ),
     );
   }
 
@@ -136,7 +145,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 선택된 탭의 아이콘 및 슬라이딩 바 적용
   Widget _buildTabItem(int index, IconData icon, String label) {
     bool isSelected = _selectedIndex == index;
 
@@ -164,7 +172,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 글씨 스타일
   TextStyle _tabTextStyle() {
     return TextStyle(
       fontSize: 12,

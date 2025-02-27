@@ -62,7 +62,7 @@ class _AddClothScreenState extends State<AddClothScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => CameraScreenWithOverlay(
-                    guidelineAsset: 'assets/closet/top_cloth_guideline.png',
+                    guidelineAsset: 'assets/closet/top_cloth_guideline_s.png',
                   ),
                 ),
               );
